@@ -1,5 +1,3 @@
-// script.js
-
 async function loadGuaranteeData() {
   const urlParams = new URLSearchParams(window.location.search);
   const recordId = urlParams.get("record");
@@ -12,40 +10,37 @@ async function loadGuaranteeData() {
   try {
     const response = await fetch(`/api/fetch-records?record=${recordId}`);
     const data = await response.json();
-    const record = data.fields;
+    const fields = data.fields;
 
-    // Example injections — only inject if element exists
+    // Inject Airtable fields into HTML
 
+    // Inject Hero Image if you want later
+    const heroImgEl = document.querySelector(".hero-img");
+    if (heroImgEl && fields["Hero Image URL"]) {
+      heroImgEl.src = fields["Hero Image URL"]; // <-- you could store hero image URLs too
+    }
+
+    // Inject LGC Code
     const lgcCodeEl = document.querySelector(".lgc-code");
-    if (lgcCodeEl && record["LGC Code"]) {
-      lgcCodeEl.textContent = record["LGC Code"];
+    if (lgcCodeEl && fields["LGC Code"]) {
+      lgcCodeEl.textContent = fields["LGC Code"];
     }
 
-    const legalHtmlEl = document.querySelector(".legal-html");
-    if (legalHtmlEl && record["Legal HTML"]) {
-      legalHtmlEl.innerHTML = record["Legal HTML"];
-    }
-
-    const productNameEl = document.querySelector(".product-name");
-    if (productNameEl && record["Product"]) {
-      productNameEl.textContent = record["Product"];
-    }
-
-    const legalYearEl = document.querySelector(".legal-year");
-    if (legalYearEl && record["Legal Year"]) {
-      legalYearEl.textContent = record["Legal Year"];
-    }
-
+    // Inject Job Number
     const jobNumberEl = document.querySelector(".job-number");
-    if (jobNumberEl && record["Job #"]) {
-      jobNumberEl.textContent = record["Job #"];
+    if (jobNumberEl && fields["Job #"]) {
+      jobNumberEl.textContent = fields["Job #"];
     }
 
-    // Add other fields dynamically here as needed!
+    // Inject Legal HTML
+    const legalHtmlEl = document.querySelector(".legal-html");
+    if (legalHtmlEl && fields["Legal HTML"]) {
+      legalHtmlEl.innerHTML = fields["Legal HTML"];
+    }
   } catch (err) {
-    console.error("Error fetching Airtable record:", err);
+    console.error("Error fetching record:", err);
   }
 }
 
-// Load after DOM is ready
+// Load the data once the page is ready
 document.addEventListener("DOMContentLoaded", loadGuaranteeData);
