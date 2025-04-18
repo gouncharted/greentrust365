@@ -542,3 +542,81 @@ body {
   flex: 1;
   flex-shrink: 0;
 }
+
+/* legal-wrapper */
+.legal-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 0px 0px 0px 0px;
+  overflow: hidden;
+  display: flex;
+  align-items: start;
+  align-content: stretch;
+  justify-content: start;
+  gap: 6px;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  flex-shrink: 0;
+  align-self: start;
+}
+
+/* code-wrapper */
+.code-wrapper {
+  position: relative;
+  width: 100%;
+  height: 7px;
+  border-radius: 0px 0px 0px 0px;
+  overflow: hidden;
+  display: flex;
+  align-items: end;
+  align-content: stretch;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+/* lgc-code */
+.lgc-code {
+  position: relative;
+  height: 100%;
+  border-radius: 0px 0px 0px 0px;
+  display: flex;
+  align-items: start;
+  align-content: stretch;
+  justify-content: start;
+  gap: 2px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  flex: 1;
+}
+
+/* job-number */
+.job-number {
+  position: relative;
+  height: 100%;
+  border-radius: 0px 0px 0px 0px;
+  display: flex;
+  align-items: start;
+  align-content: stretch;
+  justify-content: start;
+  gap: 2px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  flex: 1;
+}
+
+/* legal-html */
+.legal-html {
+  position: relative;
+  width: 100%;
+  border-radius: 0px 0px 0px 0px;
+  overflow: hidden;
+  display: flex;
+  align-items: start;
+  align-content: stretch;
+  justify-content: start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex: 1;
+}
