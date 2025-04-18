@@ -52,8 +52,8 @@ body {
   grid-template-columns: 507px 105px;
 }
 
-/* content-container */
-.contentco-0bafeacc66d7 {
+/* body-section */
+.body-section {
   position: relative;
   width: 816px;
   height: 816px;
@@ -89,8 +89,8 @@ body {
   border-radius: 0px 0px 0px 0px;
 }
 
-/* content-wrapper */
-.contentwr-0bafe0a7d311 {
+/* content-container */
+.content-container {
   position: relative;
   width: 676px;
   height: 100%;
@@ -422,8 +422,8 @@ body {
   font-weight: 300;
 }
 
-/* content-div */
-.contentdi-0d922085d19a {
+/* .content-section */
+.content-section {
   position: relative;
   width: 100%;
   background: #ffffffff;
@@ -468,7 +468,7 @@ body {
 }
 
 /* syngenta-logo-wrapper */
-.syngental-0b9f91539ff7 {
+.syngental-logo-wrapper {
   position: relative;
   width: 140px;
   height: 100%;
@@ -484,20 +484,6 @@ body {
   flex-wrap: nowrap;
   flex-shrink: 0;
   align-self: center;
-}
-
-/* syngenta-logo */
-.syngental-0bb1edfc0394 > svg {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  transform: translate(0px, 0px);
-}
-.syngental-0bb1edfc0394 {
-  position: relative;
-  width: 92px;
-  height: 25.82px;
-  flex-shrink: 0;
 }
 
 /* product-logo */
