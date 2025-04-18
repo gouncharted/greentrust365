@@ -16,9 +16,9 @@ async function loadGuaranteeData() {
     // console.log(fields);
 
     // Inject Hero Image
-    const heroImgEl = document.querySelector(".hero-img");
-    if (heroImgEl && fields["Hero Image URL"]) {
-      heroImgEl.src = fields["Hero Image URL"];
+    const heroImgEl = document.querySelector(".hero-img-wrapper img");
+    if (heroImgEl && fields["Hero Image"] && fields["Hero Image"][0]) {
+      heroImgEl.src = fields["Hero Image"][0].url;
     }
 
     // Inject Product Logo
