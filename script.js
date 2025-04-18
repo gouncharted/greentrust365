@@ -15,10 +15,16 @@ async function loadGuaranteeData() {
     // Uncomment this if you want to debug what fields came in
     // console.log(fields);
 
-    // Inject Hero Image if needed
+    // Inject Hero Image
     const heroImgEl = document.querySelector(".hero-img");
     if (heroImgEl && fields["Hero Image URL"]) {
       heroImgEl.src = fields["Hero Image URL"];
+    }
+
+    // Inject Product Logo
+    const logoImgEl = document.querySelector(".sheet-logo");
+    if (logoImgEl && fields["Logo URL"]) {
+      logoImgEl.src = fields["Logo URL"];
     }
 
     // Inject LGC Code
