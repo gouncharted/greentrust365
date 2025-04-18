@@ -382,31 +382,30 @@ body {
 }
 
 /* © 2024 Syngenta. */
-.2024-syn-0dc9f0b5a02c {
+._2024-syn-0dc9f0b5a02c {
   width: 48px;
   height: 8px;
   flex-shrink: 0;
 }
-.2024-syn-0dc9f0b5a02c .root-0 {
+._2024-syn-0dc9f0b5a02c .root-0 {
   display: flex;
   white-space: break-spaces;
   align-items: flex-start;
 }
-.2024-syn-0dc9f0b5a02c .root-0-paragraph-set-0 {
+._2024-syn-0dc9f0b5a02c .root-0-paragraph-set-0 {
   display: inline-flex;
   flex-direction: column;
   justify-content: inherit;
-
   margin-right: 1px;
   vertical-align: top;
 }
-.2024-syn-0dc9f0b5a02c .root-0-paragraph-set-0-paragraph-0 {
+._2024-syn-0dc9f0b5a02c .root-0-paragraph-set-0-paragraph-0 {
   font-size: 0;
   line-height: 1.2;
   margin: 0;
   text-align: left;
 }
-.2024-syn-0dc9f0b5a02c .root-0-paragraph-set-0-paragraph-0-text-0 {
+._2024-syn-0dc9f0b5a02c .root-0-paragraph-set-0-paragraph-0-text-0 {
   color: rgba(0, 0, 0, 1);
   text-transform: none;
 
