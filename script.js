@@ -1,16 +1,18 @@
-const airtableApiKey = 'YOUR_API_KEY';
-const baseId = 'YOUR_BASE_ID';
-const tableName = 'YOUR_TABLE_NAME';
+fetch("/api/fetch-records")
+  .then(res => res.json())
+  .then(data => {
+    const record = data.records[0].fields;
 
-fetch(`https://api.airtable.com/v0/${baseId}/${tableName}`, {
-  headers: {
-    Authorization: `Bearer ${airtableApiKey}`,
-  }
-})
-.then(response => response.json())
-.then(data => {
-  const record = data.records[0].fields;
-  document.querySelector('.headline').innerText = record.guarantee_title || 'Missing Title';
-  document.querySelector('.intro-paragraph').innerText = record.intro_paragraph || 'Missing Paragraph';
-})
-.catch(error => console.error('Airtable Fetch Error:', error));
+    // Inject LGC Code
+    const lgcCodeEl = document.querySelector(".lgc-code");
+    if (lgcCodeEl && record["LGC Code"]) {
+      lgcCodeEl.innerText = record["LGC Code"];
+    }
+
+    // Inject Legal Copy (HTML-safe)
+    const legalEl = document.querySelector(".legal-html");
+    if (legalEl && record["Legal HTML"]) {
+      legalEl.innerHTML = record["Legal HTML"];
+    }
+  })
+  .catch(err => console.error("Airtable Fetch Error:", err));
