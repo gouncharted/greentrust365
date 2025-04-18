@@ -1,0 +1,27 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #eeeeee; /* Light gray for background */
+  width: 100vw; /* Let body fill the viewport */
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Your wrapper page */
+.page {
+  width: 215.9mm;
+  height: 279.4mm;
+  background: #ffffff; /* White page */
+  box-sizing: border-box;
+  padding: 15mm; /* Or however much margin you want inside the page */
+  page-break-after: always;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Optional: light page shadow */
+}
