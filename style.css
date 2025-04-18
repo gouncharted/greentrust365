@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+}
+
+.page {
+  width: 215.9mm;
+  height: 279.4mm;
+  margin: 0 auto;
+  padding: 20mm;
+  box-sizing: border-box;
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.first-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hero-img {
+  width: 70%;
+  height: 100px;
+  background-color: #eee;
+}
+
+.color-fill {
+  width: 30%;
+  background-color: #75c447;
+}
+
+.top-bar {
+  height: 8px;
+  background: black;
+}
+
+.logo-bar {
+  height: 50px;
+  background: lightgray;
+}
+
+.content-area {
+  margin-top: 20px;
+}
