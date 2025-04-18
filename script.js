@@ -12,12 +12,13 @@ async function loadGuaranteeData() {
     const data = await response.json();
     const fields = data.fields;
 
-    // Inject Airtable fields into HTML
+    // Uncomment this if you want to debug what fields came in
+    // console.log(fields);
 
-    // Inject Hero Image if you want later
+    // Inject Hero Image if needed
     const heroImgEl = document.querySelector(".hero-img");
     if (heroImgEl && fields["Hero Image URL"]) {
-      heroImgEl.src = fields["Hero Image URL"]; // <-- you could store hero image URLs too
+      heroImgEl.src = fields["Hero Image URL"];
     }
 
     // Inject LGC Code
@@ -37,10 +38,12 @@ async function loadGuaranteeData() {
     if (legalHtmlEl && fields["Legal HTML"]) {
       legalHtmlEl.innerHTML = fields["Legal HTML"];
     }
+
+    // (Optional future fields: you can expand here as needed)
   } catch (err) {
-    console.error("Error fetching record:", err);
+    console.error("Error fetching Airtable record:", err);
   }
 }
 
-// Load the data once the page is ready
-document.addEventListener("DOMContentLoaded", loadGuaranteeData);
+// 🚀 Make sure the fetch actually runs
+loadGuaranteeData();
