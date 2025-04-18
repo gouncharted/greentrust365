@@ -201,6 +201,12 @@
   text-decoration: none;
 }
 
+.syngenta-logo {
+  max-width: 75px;
+  width: 100%;
+  height: auto;
+}
+
 /* LGC code */
 .lgc-code {
   color: #2c2e35;
