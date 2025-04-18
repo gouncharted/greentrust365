@@ -1,17 +1,26 @@
-export default async function handler(req, res) {
-  const apiKey = process.env.AIRTABLE_API_KEY;
-  const baseId = process.env.AIRTABLE_BASE_ID;
-  const tableName = 'Guarantees';
-  const viewName = 'Grid view';
+// api/fetch-records.js
 
-  const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableName}?view=${encodeURIComponent(viewName)}`, {
+export default async function handler(req, res) {
+  const { record } = req.query;
+
+  if (!record) {
+    return res.status(400).json({ error: "Record ID is required" });
+  }
+
+  const baseId = "appx1vVOIK3mHOuQk"; // Your Airtable Base ID
+  const tableName = "Guarantees"; // Your table name
+
+  const url = `https://api.airtable.com/v0/${baseId}/${tableName}/${record}`;
+
+  const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${apiKey}`,
-    }
+      Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+    },
   });
 
   if (!response.ok) {
-    return res.status(response.status).json({ error: 'Error fetching Airtable records' });
+    console.error("Airtable Fetch Error:", await response.text());
+    return res.status(500).json({ error: "Failed to fetch Airtable record" });
   }
 
   const data = await response.json();
