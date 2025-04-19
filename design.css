@@ -1,9 +1,38 @@
-/* Letter-size wrapper: main page grid */
+/* ========================= */
+/* GLOBAL RESET & PAGE WRAPPER */
+/* ========================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  color: #2c2e35;
+  background-color: #f5f5f5; /* Light gray background */
+}
+
+/* Wrapper for full page */
+.page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding: 40px 0;
+}
+
+/* Letter Size Page Layout */
 .letter-size-wrapper {
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 630px;
+  min-height: 810px;
+  overflow: hidden;
   display: grid;
-  place-items: center;
   position: relative;
-  overflow: clip;
 
   grid-template-areas:
     "Hero-Image Hero-Image top-right top-right"
@@ -13,26 +42,13 @@
     ". . Alliance-Frame Alliance-Frame";
   grid-template-rows: 18px 107px 72px 616px 18px;
   grid-template-columns: 18px 616.5fr 115.5fr 18px;
+  place-items: center;
 }
 
-/* Light green block */
-.light-green {
-  background-color: #75c447;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
+/* ========================= */
+/* SECTION STYLES */
+/* ========================= */
 
-/* Light green block */
-.light-green-top {
-  background-color: #75c447;
-  grid-area: top-right;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-/* Hero image container */
 .hero-img-wrapper {
   grid-area: Hero-Image;
   width: 100%;
@@ -41,30 +57,40 @@
   overflow: clip;
 }
 
-/* Brand banner (grid) */
+.light-green {
+  background-color: #75c447;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.light-green-top {
+  background-color: #75c447;
+  grid-area: top-right;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
 .brand-banner {
   grid-area: Brand-Banner;
   background-color: #ffffff;
   display: grid;
   grid-template-rows: 10px auto 2px;
-  grid-template-columns: 1fr;
   width: 100%;
   height: 100%;
   position: relative;
 }
 
-/* Syngenta logo block */
 .syngenta-logo-wrapper {
   grid-area: Syngenta-Logo;
   display: grid;
   grid-template-rows: 10px auto 2px;
-  grid-template-columns: 1fr;
   width: 100%;
   height: 100%;
   position: relative;
 }
 
-/* Alliance graphic wrapper */
 .alliance-graphic-wrapper {
   grid-area: Alliance-Frame;
   background-image: linear-gradient(to bottom, #75c447);
@@ -72,7 +98,6 @@
   height: 100%;
 }
 
-/* Dark green block */
 .dark-green {
   background-color: #006a30;
   color: #ffffff;
@@ -80,19 +105,21 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 0 10px;
   display: flex;
   position: relative;
 }
 
-/* Sheet logo image */
+/* ========================= */
+/* IMAGE STYLES */
+/* ========================= */
+
 .sheet-logo {
   max-height: 35px;
+  width: auto;
   position: relative;
 }
 
-/* Sheet logo wrapper */
 .sheet-logo-wrapper {
   justify-content: flex-end;
   align-items: center;
@@ -102,7 +129,22 @@
   display: flex;
 }
 
-/* Content Wrapper */
+.syngenta-logo {
+  max-width: 75px;
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+.right-bar {
+  background-color: #75c447;
+  overflow: hidden;
+}
+
+/* ========================= */
+/* CONTENT + TEXT STYLES */
+/* ========================= */
+
 .content-wrapper {
   grid-area: Content;
   display: flex;
@@ -110,171 +152,68 @@
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 20px;
 }
 
-/* Legal block */
-.legal-html {
-  font-size: 6px;
-  line-height: 1.25;
-}
-
-/* Headline style */
-.headline {
-  color: #006a30;
+/* Text container for body copy or content blocks */
+.content-container {
   width: 100%;
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: "Helvetica Neue LT Std", sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 100%;
-  text-decoration: none;
 }
 
-/* Body copy */
-.body-copy {
-  color: #2c2e35;
-  width: 100%;
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: "Helvetica Neue LT Std", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 15px;
-  text-decoration: none;
-}
-
-/* Subheadline */
-.subheadline {
-  color: #2c2e35;
-  text-align: center;
-  width: 100%;
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 15px;
-  text-decoration: none;
-}
-
-/* Code row (Job number + LGC code) */
-.code-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  text-decoration: none;
-}
-
-/* Job number section */
-.job-number {
-  display: flex;
-  grid-column-gap: 1px;
-  flex: 0 auto;
-  justify-content: flex-start;
-  align-items: center;
-  text-decoration: none;
-}
-
-.syngenta-logo {
-  max-width: 75px;
-  width: 100%;
-  height: auto;
-}
-
-/* LGC code */
-.lgc-code {
-  color: #2c2e35;
-  margin-top: 0;
-  margin-bottom: 0;
-  font-family: "Helvetica Neue LT Std", sans-serif;
-  font-size: 6px;
-  font-weight: 400;
-  line-height: 100%;
-  text-decoration: none;
-}
-
-/* Right Bar Image */
-.right-bar {
-  background-color: #75c447;
-  overflow: hidden;
-}
-
-/* FONTS*/
-/* =========================== */
-/* BASE TYPOGRAPHY STYLES */
-/* =========================== */
-
-/* Main font family */
-body {
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  color: #2c2e35; /* Base text color */
-}
-
-/* HEADLINE - 55 Roman 20pt · 20/100 */
+/* --- HEADLINE - 55 Roman 20pt · 20/100 --- */
 .headline {
   font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 400; /* Roman */
+  font-weight: 400;
   font-size: 20pt;
   line-height: 100%;
-  color: #006a30; /* Dark green headline */
-  text-decoration: none;
-  margin-top: 0;
-  margin-bottom: 0;
+  color: #006a30; /* Dark green */
+  margin: 0;
 }
 
-/* SUBHEADLINE - 45 Light 10pt · 10/15 */
+/* --- SUBHEADLINE - 45 Light 10pt · 10/15 --- */
 .subheadline {
   font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 300; /* Light */
+  font-weight: 300;
   font-size: 10pt;
   line-height: 15pt;
   color: #2c2e35;
   text-align: center;
-  text-decoration: none;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
 }
 
-/* BODY COPY - 45 Light 10pt · 10/15 */
+/* --- BODY COPY - 45 Light 10pt · 10/15 --- */
 .body-copy {
   font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 300; /* Light */
+  font-weight: 300;
   font-size: 10pt;
   line-height: 15pt;
   color: #2c2e35;
-  text-decoration: none;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
 }
 
-/* LEGAL COPY - Legal 45 Light 6pt · 6/7 */
+/* --- LEGAL COPY - 45 Light 6pt · 6/7 --- */
 .legal-html {
   font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 300; /* Light */
+  font-weight: 300;
   font-size: 6pt;
   line-height: 7pt;
   color: #2c2e35;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
 }
 
-/* =========================== */
-/* RTF ELEMENTS (within body/ legal) */
-/* =========================== */
+/* ========================= */
+/* INLINE STYLES (RTF Handling) */
+/* ========================= */
 
 /* Bold Text */
 .body-copy b,
 .body-copy strong,
 .legal-html b,
 .legal-html strong {
-  font-weight: 700; /* Bold */
+  font-weight: 700;
 }
 
-/* Superscript Text */
+/* Superscript */
 .body-copy sup,
 .legal-html sup {
   font-size: 6pt;
@@ -295,8 +234,34 @@ body {
   font-style: italic;
 }
 
-/* Underline */
+/* Underlines */
 .body-copy u,
 .legal-html u {
   text-decoration: underline;
+}
+
+/* ========================= */
+/* CODES (Job # and LGC Codes) */
+/* ========================= */
+
+.legal-block {
+  margin-top: 20px;
+}
+
+.code-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.job-number,
+.lgc-code {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 400;
+  font-size: 6pt;
+  line-height: 100%;
+  color: #2c2e35;
 }
