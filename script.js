@@ -12,11 +12,6 @@ async function loadGuaranteeData() {
     const data = await response.json();
     const fields = data.fields;
 
-    // --- SET PAGE TITLE FROM GUARANTEE ---
-    if (fields["Guarantee"]) {
-      document.title = fields["Guarantee"];
-    }
-
     // Uncomment this if you want to debug what fields came in
     // console.log(fields);
 
