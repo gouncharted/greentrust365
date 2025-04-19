@@ -120,19 +120,6 @@
   line-height: 1.25;
 }
 
-/* Text boxes */
-.text-boxes {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  grid-row-gap: 10px;
-  width: 100%;
-  max-width: 475px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
 /* Headline style */
 .headline {
   color: #006a30;
@@ -214,4 +201,102 @@
 .right-bar {
   background-color: #75c447;
   overflow: hidden;
+}
+
+/* FONTS*/
+/* =========================== */
+/* BASE TYPOGRAPHY STYLES */
+/* =========================== */
+
+/* Main font family */
+body {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  color: #2c2e35; /* Base text color */
+}
+
+/* HEADLINE - 55 Roman 20pt · 20/100 */
+.headline {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 400; /* Roman */
+  font-size: 20pt;
+  line-height: 100%;
+  color: #006a30; /* Dark green headline */
+  text-decoration: none;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* SUBHEADLINE - 45 Light 10pt · 10/15 */
+.subheadline {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 300; /* Light */
+  font-size: 10pt;
+  line-height: 15pt;
+  color: #2c2e35;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* BODY COPY - 45 Light 10pt · 10/15 */
+.body-copy {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 300; /* Light */
+  font-size: 10pt;
+  line-height: 15pt;
+  color: #2c2e35;
+  text-decoration: none;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* LEGAL COPY - Legal 45 Light 6pt · 6/7 */
+.legal-html {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 300; /* Light */
+  font-size: 6pt;
+  line-height: 7pt;
+  color: #2c2e35;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* =========================== */
+/* RTF ELEMENTS (within body/ legal) */
+/* =========================== */
+
+/* Bold Text */
+.body-copy b,
+.body-copy strong,
+.legal-html b,
+.legal-html strong {
+  font-weight: 700; /* Bold */
+}
+
+/* Superscript Text */
+.body-copy sup,
+.legal-html sup {
+  font-size: 6pt;
+  vertical-align: super;
+}
+
+/* Links */
+.body-copy a,
+.legal-html a {
+  color: #75c447; /* Light Green for links */
+  text-decoration: underline;
+  font-weight: 400;
+}
+
+/* Italics */
+.body-copy em,
+.legal-html em {
+  font-style: italic;
+}
+
+/* Underline */
+.body-copy u,
+.legal-html u {
+  text-decoration: underline;
 }
