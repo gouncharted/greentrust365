@@ -1,1 +1,191 @@
+/* ========================================== */
+/* WORKSHEET HEADER (Logo Bar + Bottom Bar) */
+/* ========================================== */
 
+.worksheet-logo-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #75c447;
+  padding: 10px 20px;
+}
+
+.worksheet-logo-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.worksheet-logo-right {
+  flex: 0;
+  background-color: #006a30;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.product-logo {
+  height: 35px;
+  width: auto;
+}
+
+.syngenta-logo {
+  height: 20px;
+  width: auto;
+}
+
+.worksheet-bottom-bar {
+  background-color: #75c447;
+  height: 4px;
+  width: 100%;
+}
+
+/* ========================================== */
+/* WORKSHEET CONTENT AREA */
+/* ========================================== */
+
+.worksheet-content {
+  padding: 20px;
+}
+
+.worksheet-header {
+  margin-bottom: 20px;
+}
+
+.worksheet-title {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 500;
+  font-size: 14pt;
+  color: #007035;
+  line-height: 15pt;
+}
+
+.worksheet-dates {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 400;
+  font-size: 9pt;
+  color: #2c2e35;
+  line-height: 15pt;
+}
+
+/* ========================================== */
+/* TABLE STYLES */
+/* ========================================== */
+
+.worksheet-table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.worksheet-row {
+  display: flex;
+  align-items: center;
+}
+
+.worksheet-header-row {
+  background-color: #007035;
+  color: white;
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 700; /* Bold condensed */
+  font-size: 8pt;
+  line-height: 9pt;
+  text-align: left;
+  padding: 6px 10px;
+}
+
+.worksheet-product-header,
+.worksheet-price-header,
+.worksheet-x-header,
+.worksheet-equals-header {
+  padding: 8px 12px;
+  border: 0.5px solid #007035;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+.worksheet-product-header {
+  flex: 3;
+}
+
+.worksheet-price-header,
+.worksheet-x-header,
+.worksheet-equals-header {
+  flex: 1;
+  text-align: center;
+}
+
+/* Row backgrounds (alternate shading) */
+.worksheet-row-white {
+  background-color: white;
+}
+
+.worksheet-row-light-green {
+  background-color: #c7e1ad;
+}
+
+.worksheet-row-light-blue {
+  background-color: #73cee3;
+}
+
+/* Table cells */
+.worksheet-product,
+.worksheet-price,
+.worksheet-x,
+.worksheet-equals {
+  padding: 8px 12px;
+  border: 0.5px solid #007035;
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 400; /* Condensed normal */
+  font-size: 7.5pt;
+  line-height: 8pt;
+  color: #2c2e35;
+}
+
+.worksheet-price,
+.worksheet-x,
+.worksheet-equals {
+  text-align: center;
+}
+
+/* ========================================== */
+/* FOOTNOTES */
+/* ========================================== */
+
+.worksheet-footnotes {
+  margin-top: 20px;
+}
+
+.worksheet-footnotes-list {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 400;
+  font-size: 6pt;
+  line-height: 7pt;
+  color: #2c2e35;
+}
+
+/* Bold and Superscript styling in footnotes */
+.worksheet-footnotes-list b {
+  font-weight: 700;
+}
+
+.worksheet-footnotes-list sup {
+  font-size: 6pt;
+  vertical-align: super;
+}
+
+/* ========================================== */
+/* UTILITY STYLES */
+/* ========================================== */
+
+/* Links */
+a {
+  color: #75c447;
+  text-decoration: underline;
+}
+
+/* Italics */
+em {
+  font-style: italic;
+}
