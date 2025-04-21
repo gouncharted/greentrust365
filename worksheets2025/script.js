@@ -13,41 +13,34 @@ async function loadWorksheetData() {
     );
     const data = await response.json();
 
-    const { pageFields, mainProducts, palletOffers, footnotes } = data;
+    const fields = data.pageFields;
+    const mainProducts = data.mainProducts;
+    const palletOffers = data.palletOffers;
+    const footnotes = data.footnotes;
 
-    // Set page title
-    if (pageFields["Worksheet Title"]) {
-      document.title = pageFields["Worksheet Title"];
-      const titleEl = document.querySelector(".worksheet-main-title");
-      if (titleEl) titleEl.innerText = pageFields["Worksheet Title"];
+    // === Inject Page Title ===
+    if (fields["Guarantee"]) {
+      document.title = fields["Guarantee"];
     }
 
-    // Set Program Year Dates
-    if (pageFields["Program Year Dates"]) {
-      const sectionLabels = document.querySelectorAll(".section-label");
-      if (sectionLabels[0])
-        sectionLabels[0].innerText = pageFields["Program Year Dates"];
-    }
-    if (pageFields["Early Order Dates"]) {
-      const sectionLabels = document.querySelectorAll(".section-label");
-      if (sectionLabels[1])
-        sectionLabels[1].innerText = pageFields["Early Order Dates"];
-    }
-
-    // Populate Main Products Table
+    // === Inject Main Products Table ===
     const mainTable = document.querySelector(".worksheet-rows-main");
-    if (mainTable && mainProducts.length) {
+    if (mainTable && mainProducts.length > 0) {
       mainProducts.forEach((product) => {
         const row = document.createElement("div");
-        row.classList.add(
-          "row",
-          `row-${(product["Row Highlight"] || "White")
-            .toLowerCase()
-            .replace(" ", "-")}`
-        );
+        row.className = `row worksheet-row ${
+          product["Row Highlight"] === "Blue"
+            ? "highlight-blue"
+            : product["Row Highlight"] === "Green"
+            ? "highlight-green"
+            : "worksheet-row-white"
+        }`;
+
         row.innerHTML = `
           <div class="worksheet-product">${product["Product Name"] || ""}</div>
-          <div class="worksheet-price">$${product["Price"] || ""}</div>
+          <div class="worksheet-price">${
+            product["Price"] ? `$${product["Price"]}` : ""
+          }</div>
           <div class="worksheet-x">X</div>
           <div class="worksheet-equals">=</div>
         `;
@@ -55,20 +48,24 @@ async function loadWorksheetData() {
       });
     }
 
-    // Populate Pallet Offers Table
+    // === Inject Pallet Offers Table ===
     const palletTable = document.querySelector(".worksheet-rows-pallet");
-    if (palletTable && palletOffers.length) {
+    if (palletTable && palletOffers.length > 0) {
       palletOffers.forEach((product) => {
         const row = document.createElement("div");
-        row.classList.add(
-          "row",
-          `row-${(product["Row Highlight"] || "White")
-            .toLowerCase()
-            .replace(" ", "-")}`
-        );
+        row.className = `row worksheet-row ${
+          product["Row Highlight"] === "Blue"
+            ? "highlight-blue"
+            : product["Row Highlight"] === "Green"
+            ? "highlight-green"
+            : "worksheet-row-white"
+        }`;
+
         row.innerHTML = `
           <div class="worksheet-product">${product["Product Name"] || ""}</div>
-          <div class="worksheet-price">$${product["Price"] || ""}</div>
+          <div class="worksheet-price">${
+            product["Price"] ? `$${product["Price"]}` : ""
+          }</div>
           <div class="worksheet-x">X</div>
           <div class="worksheet-equals">=</div>
         `;
@@ -76,17 +73,19 @@ async function loadWorksheetData() {
       });
     }
 
-    // Populate Footnotes
-    const footnotesList = document.querySelector(".worksheet-footnotes-list");
-    if (footnotesList && footnotes.length) {
-      footnotes.forEach((note, index) => {
-        const div = document.createElement("div");
-        div.innerHTML = `<b>${index + 1}.</b> ${note}`;
-        footnotesList.appendChild(div);
+    // === Inject Footnotes ===
+    const footnotesContainer = document.querySelector(
+      ".worksheet-footnotes-list"
+    );
+    if (footnotesContainer && footnotes.length > 0) {
+      footnotes.forEach((note) => {
+        const p = document.createElement("p");
+        p.innerHTML = note;
+        footnotesContainer.appendChild(p);
       });
     }
   } catch (err) {
-    console.error("Error fetching worksheet data:", err);
+    console.error("Error fetching Worksheet record:", err);
   }
 }
 
