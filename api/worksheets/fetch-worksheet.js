@@ -19,33 +19,13 @@ export async function GET(req) {
   try {
     const record = await base("Worksheet Pages").find(recordId);
 
-    // Expand linked Main Products and Pallet Offers
-    const mainProductIds = record.get("Main Products") || [];
-    const palletOfferIds = record.get("Pallet Offers") || [];
-    const footnotes = record.get("Footnotes") || [];
-
-    const mainProducts = mainProductIds.length
-      ? await Promise.all(
-          mainProductIds.map((id) => base("Worksheet Table Data").find(id))
-        )
-      : [];
-
-    const palletOffers = palletOfferIds.length
-      ? await Promise.all(
-          palletOfferIds.map((id) => base("Worksheet Table Data").find(id))
-        )
-      : [];
-
     return NextResponse.json({
-      pageFields: record.fields,
-      mainProducts: mainProducts.map((product) => product.fields),
-      palletOffers: palletOffers.map((product) => product.fields),
-      footnotes: footnotes,
+      pageFields: record.fields, // just return the top-level fields
     });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch worksheet." },
+      { error: "Failed to fetch worksheet page." },
       { status: 500 }
     );
   }

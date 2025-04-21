@@ -1,7 +1,7 @@
 async function loadWorksheetData(recordId) {
   try {
     const res = await fetch(
-      `/worksheets2025/api/fetch-worksheet?record=${recordId}`
+      `/api/worksheets/fetch-table-records?record=${recordId}`
     );
     const data = await res.json();
 
