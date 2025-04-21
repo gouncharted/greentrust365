@@ -1,14 +1,3 @@
-/* === PAGE === */
-.page {
-  width: 100%;
-  min-height: 792px;
-  padding: 30px 36px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 /* === HERO LOGO BAR === */
 .hero-logo-bar {
   width: 100%;
