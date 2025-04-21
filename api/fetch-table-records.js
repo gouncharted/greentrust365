@@ -1,30 +1,20 @@
-import { NextResponse } from "next/server";
-import Airtable from "airtable";
+export default async function handler(req, res) {
+  const baseId = "appx1vVOIK3mHOuQk"; // Base ID (unchanged)
+  const tableName = "GT365GTWS2025"; // UPDATED
 
-const baseId = "appx1vVOIK3mHOuQk"; // Airtable Base ID
-const tableName = "Golf and Sports Turf Program Product Prices"; // TABLE for Products/Pallets
-const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
-  baseId
-);
+  const url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
 
-export async function GET() {
-  try {
-    const records = await base(tableName).select({ view: "Grid view" }).all();
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${process.env.AIRTABLE_API_KEY}`,
+    },
+  });
 
-    const mainProducts = records
-      .filter((record) => record.fields.Section === "Product")
-      .map((record) => record.fields);
-
-    const palletOffers = records
-      .filter((record) => record.fields.Section === "Pallet Offer")
-      .map((record) => record.fields);
-
-    return NextResponse.json({ mainProducts, palletOffers });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Failed to fetch table records." },
-      { status: 500 }
-    );
+  if (!response.ok) {
+    console.error("Airtable Fetch Error:", await response.text());
+    return res.status(500).json({ error: "Failed to fetch Airtable table" });
   }
+
+  const data = await response.json();
+  res.status(200).json(data);
 }
