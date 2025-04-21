@@ -35,3 +35,17 @@
   overflow: hidden;
   display: grid;
 }
+
+/* Worksheet Wrapper */
+.worksheet-wrapper {
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 630px;
+  min-height: 810px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  padding: 20px 20px 40px 20px; /* you can tweak padding to better match print output */
+}
