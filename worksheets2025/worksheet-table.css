@@ -80,8 +80,14 @@
 }
 
 .worksheet-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 80px 40px 40px;
   align-items: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid #007035;
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-size: 8pt;
+  line-height: 1.1;
 }
 
 .worksheet-header-row {
@@ -116,7 +122,7 @@
   text-align: center;
 }
 
-/* Row backgrounds (alternate shading) */
+/* Row backgrounds */
 .worksheet-row-white {
   background-color: white;
 }
@@ -130,22 +136,16 @@
 }
 
 /* Table cells */
-.worksheet-product,
-.worksheet-price,
-.worksheet-x,
-.worksheet-equals {
-  padding: 8px 12px;
-  border: 0.5px solid #007035;
+.worksheet-product {
   font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 400; /* Condensed normal */
-  font-size: 7.5pt;
-  line-height: 8pt;
-  color: #2c2e35;
+  font-weight: 300;
 }
 
 .worksheet-price,
 .worksheet-x,
 .worksheet-equals {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -165,7 +165,6 @@
   color: #2c2e35;
 }
 
-/* Bold and Superscript styling in footnotes */
 .worksheet-footnotes-list b {
   font-weight: 700;
 }
@@ -179,13 +178,11 @@
 /* UTILITY STYLES */
 /* ========================================== */
 
-/* Links */
 a {
   color: #75c447;
   text-decoration: underline;
 }
 
-/* Italics */
 em {
   font-style: italic;
 }
