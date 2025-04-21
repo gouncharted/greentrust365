@@ -14,79 +14,73 @@ async function loadWorksheetData() {
     const data = await response.json();
 
     const fields = data.pageFields;
-    const mainProducts = data.mainProducts;
-    const palletOffers = data.palletOffers;
-    const footnotes = data.footnotes;
+    const mainProducts = data.mainProducts || [];
+    const palletOffers = data.palletOffers || [];
+    const footnotes = data.footnotes || [];
 
-    // === Inject Page Title ===
-    if (fields["Guarantee"]) {
-      document.title = fields["Guarantee"];
+    // Set page title from Airtable
+    if (fields["Title"]) {
+      document.title = fields["Title"];
     }
 
-    // === Inject Main Products Table ===
+    // Populate Main Products Table
     const mainTable = document.querySelector(".worksheet-rows-main");
-    if (mainTable && mainProducts.length > 0) {
-      mainProducts.forEach((product) => {
-        const row = document.createElement("div");
-        row.className = `row worksheet-row ${
-          product["Row Highlight"] === "Blue"
-            ? "highlight-blue"
-            : product["Row Highlight"] === "Green"
-            ? "highlight-green"
-            : "worksheet-row-white"
-        }`;
+    mainProducts.forEach((product) => {
+      const row = document.createElement("div");
+      row.className = `row ${getHighlightClass(product["Row Highlight"])}`;
 
-        row.innerHTML = `
-          <div class="worksheet-product">${product["Product Name"] || ""}</div>
-          <div class="worksheet-price">${
-            product["Price"] ? `$${product["Price"]}` : ""
-          }</div>
-          <div class="worksheet-x">X</div>
-          <div class="worksheet-equals">=</div>
-        `;
-        mainTable.appendChild(row);
-      });
-    }
+      row.innerHTML = `
+        <div class="product">${formatProductName(product["Product"])}</div>
+        <div class="price">${formatPrice(product["Price"])}</div>
+        <div class="x">X</div>
+        <div class="equals">=</div>
+      `;
+      mainTable.appendChild(row);
+    });
 
-    // === Inject Pallet Offers Table ===
+    // Populate Pallet Offers Table
     const palletTable = document.querySelector(".worksheet-rows-pallet");
-    if (palletTable && palletOffers.length > 0) {
-      palletOffers.forEach((product) => {
-        const row = document.createElement("div");
-        row.className = `row worksheet-row ${
-          product["Row Highlight"] === "Blue"
-            ? "highlight-blue"
-            : product["Row Highlight"] === "Green"
-            ? "highlight-green"
-            : "worksheet-row-white"
-        }`;
+    palletOffers.forEach((product) => {
+      const row = document.createElement("div");
+      row.className = `row ${getHighlightClass(product["Row Highlight"])}`;
 
-        row.innerHTML = `
-          <div class="worksheet-product">${product["Product Name"] || ""}</div>
-          <div class="worksheet-price">${
-            product["Price"] ? `$${product["Price"]}` : ""
-          }</div>
-          <div class="worksheet-x">X</div>
-          <div class="worksheet-equals">=</div>
-        `;
-        palletTable.appendChild(row);
-      });
-    }
+      row.innerHTML = `
+        <div class="product">${formatProductName(product["Product"])}</div>
+        <div class="price">${formatPrice(product["Price"])}</div>
+        <div class="x">X</div>
+        <div class="equals">=</div>
+      `;
+      palletTable.appendChild(row);
+    });
 
-    // === Inject Footnotes ===
-    const footnotesContainer = document.querySelector(
-      ".worksheet-footnotes-list"
-    );
-    if (footnotesContainer && footnotes.length > 0) {
-      footnotes.forEach((note) => {
-        const p = document.createElement("p");
-        p.innerHTML = note;
-        footnotesContainer.appendChild(p);
-      });
-    }
-  } catch (err) {
-    console.error("Error fetching Worksheet record:", err);
+    // Populate Footnotes
+    const footnotesList = document.querySelector(".worksheet-footnotes-list");
+    footnotes.forEach((note) => {
+      const p = document.createElement("p");
+      p.innerHTML = note;
+      footnotesList.appendChild(p);
+    });
+  } catch (error) {
+    console.error("Failed to load worksheet data:", error);
   }
 }
 
+// Helper Functions
+function getHighlightClass(highlight) {
+  if (highlight === "Green") return "highlight-green";
+  if (highlight === "Blue") return "highlight-blue";
+  return "highlight-none";
+}
+
+function formatPrice(price) {
+  if (!price) return "";
+  return `$${parseFloat(price).toFixed(2)}`;
+}
+
+function formatProductName(name) {
+  if (!name) return "";
+  return name.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"); // 5 spaces for tab
+}
+
+// 🚀 Run it!
 loadWorksheetData();
