@@ -8,18 +8,25 @@ async function loadWorksheet() {
   }
 
   try {
-    // Load the table layout HTML
+    // Load the table.html first
     const tableHtml = await fetch(
       "/worksheets2025/golfandsportsturf/table.html"
     ).then((res) => res.text());
-    document.getElementById("table-container").innerHTML = tableHtml;
 
+    document.getElementById("table-container").innerHTML = tableHtml;
     console.log("✅ Table structure loaded successfully");
 
-    // 🛠 MANUALLY call loadTable() to fetch table records
-    await loadTable();
+    // Now that the table HTML is injected,
+    // dynamically load table-script.js
+    const tableScript = document.createElement("script");
+    tableScript.src = "/worksheets2025/golfandsportsturf/table-script.js";
+    tableScript.onload = () => {
+      console.log("✅ Table script loaded successfully");
+      loadTable(recordId); // <-- Now it's safe to call!
+    };
+    document.body.appendChild(tableScript);
 
-    // Now load page-level worksheet data (program year, title)
+    // Start the page worksheet data fetch
     await loadWorksheetData(recordId);
   } catch (err) {
     console.error("Error loading worksheet:", err);
@@ -34,18 +41,14 @@ async function loadWorksheetData(recordId) {
         `Failed to fetch worksheet data. Status: ${response.status}`
       );
     }
-
     const data = await response.json();
     console.log("✅ Worksheet page data loaded:", data);
 
-    // Update title
     if (data.pageFields?.Name) {
-      document.title = data.pageFields.Name;
       const titleElement = document.querySelector(".worksheet-main-title");
       if (titleElement) titleElement.textContent = data.pageFields.Name;
+      document.title = data.pageFields.Name;
     }
-
-    // (If you later want to use Program Year, you can insert it here too)
   } catch (err) {
     console.error("Error loading worksheet page data:", err);
   }
