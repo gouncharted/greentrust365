@@ -17,29 +17,30 @@ export async function GET(req) {
   }
 
   try {
-    const record = await base("Worksheets").find(recordId); // 🛠️ Updated table name
+    // 1. Fetch the page (title + program year) from Worksheets
+    const pageRecord = await base("Worksheets").find(recordId);
 
-    const mainProductIds = record.get("Products") || [];
-    const palletOfferIds = record.get("Pallet Offers") || [];
-    const footnotes = record.get("Footnotes") || [];
+    // 2. Fetch all products from the Golf and Sports Turf Program Product Prices table
+    const productRecords = await base(
+      "Golf and Sports Turf Program Product Prices"
+    )
+      .select({ view: "Grid view" })
+      .all();
 
-    const mainProducts = mainProductIds.length
-      ? await Promise.all(
-          mainProductIds.map((id) => base("Worksheet Table Data").find(id))
-        )
-      : [];
+    // 3. Separate into Main Products vs Pallet Offers
+    const mainProducts = productRecords
+      .filter((record) => record.fields.Section === "Product")
+      .map((record) => record.fields);
 
-    const palletOffers = palletOfferIds.length
-      ? await Promise.all(
-          palletOfferIds.map((id) => base("Worksheet Table Data").find(id))
-        )
-      : [];
+    const palletOffers = productRecords
+      .filter((record) => record.fields.Section === "Pallet Offer")
+      .map((record) => record.fields);
 
+    // 4. Return everything cleanly
     return NextResponse.json({
-      pageFields: record.fields,
-      mainProducts: mainProducts.map((product) => product.fields),
-      palletOffers: palletOffers.map((product) => product.fields),
-      footnotes: footnotes,
+      pageFields: pageRecord.fields,
+      mainProducts,
+      palletOffers,
     });
   } catch (error) {
     console.error(error);
