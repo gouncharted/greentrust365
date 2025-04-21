@@ -23,7 +23,7 @@ export async function GET(req) {
       pageFields: pageRecord.fields,
     });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error fetching worksheet page:", error);
     return NextResponse.json(
       { error: "Failed to fetch worksheet page." },
       { status: 500 }
