@@ -9,26 +9,45 @@ async function loadWorksheetData() {
 
   try {
     const response = await fetch(
-      `/worksheets2025/api/fetch-records-worksheets?record=${recordId}`
+      `/worksheets2025/api/fetch-worksheet?record=${recordId}`
     );
     const data = await response.json();
-    const fields = data.fields;
 
-    // Inject Title
-    if (fields["Worksheet Title"]) {
-      document.querySelector(".worksheet-main-title").textContent =
-        fields["Worksheet Title"];
+    const { pageFields, mainProducts, palletOffers, footnotes } = data;
+
+    // Set page title
+    if (pageFields["Worksheet Title"]) {
+      document.title = pageFields["Worksheet Title"];
+      const titleEl = document.querySelector(".worksheet-main-title");
+      if (titleEl) titleEl.innerText = pageFields["Worksheet Title"];
     }
 
-    // Load Main Products Table
+    // Set Program Year Dates
+    if (pageFields["Program Year Dates"]) {
+      const sectionLabels = document.querySelectorAll(".section-label");
+      if (sectionLabels[0])
+        sectionLabels[0].innerText = pageFields["Program Year Dates"];
+    }
+    if (pageFields["Early Order Dates"]) {
+      const sectionLabels = document.querySelectorAll(".section-label");
+      if (sectionLabels[1])
+        sectionLabels[1].innerText = pageFields["Early Order Dates"];
+    }
+
+    // Populate Main Products Table
     const mainTable = document.querySelector(".worksheet-rows-main");
-    if (fields["Main Products"]) {
-      fields["Main Products"].forEach((productRow) => {
+    if (mainTable && mainProducts.length) {
+      mainProducts.forEach((product) => {
         const row = document.createElement("div");
-        row.className = "worksheet-row worksheet-row-white"; // or blue/green based on Airtable "Row Highlight" field
+        row.classList.add(
+          "row",
+          `row-${(product["Row Highlight"] || "White")
+            .toLowerCase()
+            .replace(" ", "-")}`
+        );
         row.innerHTML = `
-          <div class="worksheet-product">${productRow.Product}</div>
-          <div class="worksheet-price">${productRow.Price}</div>
+          <div class="worksheet-product">${product["Product Name"] || ""}</div>
+          <div class="worksheet-price">$${product["Price"] || ""}</div>
           <div class="worksheet-x">X</div>
           <div class="worksheet-equals">=</div>
         `;
@@ -36,15 +55,20 @@ async function loadWorksheetData() {
       });
     }
 
-    // Load Pallet Products Table
+    // Populate Pallet Offers Table
     const palletTable = document.querySelector(".worksheet-rows-pallet");
-    if (fields["Pallet Offers"]) {
-      fields["Pallet Offers"].forEach((palletRow) => {
+    if (palletTable && palletOffers.length) {
+      palletOffers.forEach((product) => {
         const row = document.createElement("div");
-        row.className = "worksheet-row worksheet-row-white";
+        row.classList.add(
+          "row",
+          `row-${(product["Row Highlight"] || "White")
+            .toLowerCase()
+            .replace(" ", "-")}`
+        );
         row.innerHTML = `
-          <div class="worksheet-product">${palletRow.Product}</div>
-          <div class="worksheet-price">${palletRow.Price}</div>
+          <div class="worksheet-product">${product["Product Name"] || ""}</div>
+          <div class="worksheet-price">$${product["Price"] || ""}</div>
           <div class="worksheet-x">X</div>
           <div class="worksheet-equals">=</div>
         `;
@@ -52,15 +76,18 @@ async function loadWorksheetData() {
       });
     }
 
-    // Inject Footnotes
-    const footnoteList = document.querySelector(".worksheet-footnotes-list");
-    if (fields["Footnotes"]) {
-      footnoteList.innerHTML = fields["Footnotes"];
+    // Populate Footnotes
+    const footnotesList = document.querySelector(".worksheet-footnotes-list");
+    if (footnotesList && footnotes.length) {
+      footnotes.forEach((note, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<b>${index + 1}.</b> ${note}`;
+        footnotesList.appendChild(div);
+      });
     }
   } catch (err) {
-    console.error("Error fetching worksheet Airtable record:", err);
+    console.error("Error fetching worksheet data:", err);
   }
 }
 
-// Run it
 loadWorksheetData();
