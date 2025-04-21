@@ -186,3 +186,25 @@ a {
 em {
   font-style: italic;
 }
+/* Main 2-Column Worksheet Layout */
+.worksheet-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Columns */
+.worksheet-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Subtitles over tables */
+.worksheet-subtitle {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-weight: 700;
+  font-size: 10pt;
+  color: #2c2e35;
+  margin-bottom: 10px;
+}
