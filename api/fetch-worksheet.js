@@ -17,35 +17,15 @@ export async function GET(req) {
   }
 
   try {
-    // 1. Fetch the page (title + program year) from Worksheets
     const pageRecord = await base("Worksheets").find(recordId);
 
-    // 2. Fetch all products from the Golf and Sports Turf Program Product Prices table
-    const productRecords = await base(
-      "Golf and Sports Turf Program Product Prices"
-    )
-      .select({ view: "Grid view" })
-      .all();
-
-    // 3. Separate into Main Products vs Pallet Offers
-    const mainProducts = productRecords
-      .filter((record) => record.fields.Section === "Product")
-      .map((record) => record.fields);
-
-    const palletOffers = productRecords
-      .filter((record) => record.fields.Section === "Pallet Offer")
-      .map((record) => record.fields);
-
-    // 4. Return everything cleanly
     return NextResponse.json({
       pageFields: pageRecord.fields,
-      mainProducts,
-      palletOffers,
     });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch worksheet." },
+      { error: "Failed to fetch worksheet page." },
       { status: 500 }
     );
   }
