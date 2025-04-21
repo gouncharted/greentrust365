@@ -1,86 +1,98 @@
+async function loadWorksheet() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const recordId = urlParams.get("record");
+
+  if (!recordId) {
+    console.error("No record ID found in URL.");
+    return;
+  }
+
+  try {
+    // Load the table.html file
+    const tableHtml = await fetch(
+      "/worksheets2025/golfandsportsturf/table.html"
+    ).then((res) => res.text());
+    document.getElementById("table-container").innerHTML = tableHtml;
+    console.log("✅ Table loaded successfully");
+
+    // Now load worksheet data
+    await loadWorksheetData(recordId);
+  } catch (err) {
+    console.error("Error loading worksheet:", err);
+  }
+}
+
 async function loadWorksheetData(recordId) {
   try {
-    const res = await fetch(
-      `/api/worksheets/fetch-table-records?record=${recordId}`
-    );
-    const data = await res.json();
+    const response = await fetch(`/api/fetch-worksheet?record=${recordId}`); // 🛠️ FIXED PATH
 
-    const pageFields = data.pageFields;
-    const mainProducts = data.mainProducts;
-    const palletOffers = data.palletOffers;
-    const footnotes = data.footnotes;
-
-    // Update title
-    if (pageFields["Guarantee"]) {
-      document.title = pageFields["Guarantee"];
-      const titleEl = document.querySelector(".worksheet-main-title");
-      if (titleEl) titleEl.textContent = pageFields["Guarantee"];
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch worksheet data. Status: ${response.status}`
+      );
     }
 
-    // Update Program Year
-    const yearEl = document.getElementById("program-year");
-    if (yearEl && pageFields["Program Year"]) {
-      yearEl.textContent = pageFields["Program Year"];
+    const data = await response.json();
+    console.log("✅ Worksheet data loaded:", data);
+
+    // Set page title
+    if (data.pageFields?.Name) {
+      document.title = data.pageFields.Name;
+      const titleElement = document.querySelector(".worksheet-main-title");
+      if (titleElement) titleElement.textContent = data.pageFields.Name;
     }
 
-    // Update Early Order Period
-    const earlyOrderEl = document.getElementById("early-order-period");
-    if (earlyOrderEl && pageFields["Early Order Dates"]) {
-      earlyOrderEl.textContent = pageFields["Early Order Dates"];
-    }
-
-    // Populate main products
-    const mainContainer = document.querySelector(".worksheet-rows-main");
-    if (mainProducts.length && mainContainer) {
-      mainProducts.forEach((product) => {
-        const row = document.createElement("div");
-        row.classList.add(
-          "row",
-          `worksheet-row-${(product["Row Highlight"] || "white")
-            .toLowerCase()
-            .replace(" ", "-")}`
-        );
-        row.innerHTML = `
-            <div class="worksheet-product">${product["Product"] || ""}</div>
-            <div class="worksheet-price">${product["Price"] || ""}</div>
-            <div class="worksheet-x">X</div>
-            <div class="worksheet-equals">=</div>
-          `;
-        mainContainer.appendChild(row);
+    // Fill Main Products Table
+    const mainTable = document.querySelector(".worksheet-rows-main");
+    if (mainTable && data.mainProducts?.length > 0) {
+      data.mainProducts.forEach((item) => {
+        const row = createProductRow(item);
+        mainTable.appendChild(row);
       });
     }
 
-    // Populate pallet offers
-    const palletContainer = document.querySelector(".worksheet-rows-pallet");
-    if (palletOffers.length && palletContainer) {
-      palletOffers.forEach((offer) => {
-        const row = document.createElement("div");
-        row.classList.add(
-          "row",
-          `worksheet-row-${(offer["Row Highlight"] || "white")
-            .toLowerCase()
-            .replace(" ", "-")}`
-        );
-        row.innerHTML = `
-            <div class="worksheet-product">${offer["Product"] || ""}</div>
-            <div class="worksheet-price">${offer["Price"] || ""}</div>
-            <div class="worksheet-x">X</div>
-            <div class="worksheet-equals">=</div>
-          `;
-        palletContainer.appendChild(row);
+    // Fill Pallet Offers Table
+    const palletTable = document.querySelector(".worksheet-rows-pallet");
+    if (palletTable && data.palletOffers?.length > 0) {
+      data.palletOffers.forEach((item) => {
+        const row = createProductRow(item);
+        palletTable.appendChild(row);
       });
     }
 
-    // Populate footnotes
-    const footnotesContainer = document.querySelector(
-      ".worksheet-footnotes-list"
-    );
-    if (footnotes.length && footnotesContainer) {
-      footnotesContainer.innerHTML = footnotes
-        .map((note) => `<p>${note}</p>`)
+    // Fill footnotes
+    const footnoteList = document.querySelector(".worksheet-footnotes-list");
+    if (footnoteList && data.footnotes?.length > 0) {
+      footnoteList.innerHTML = data.footnotes
+        .map((note) => `<div>${note}</div>`)
         .join("");
     }
   } catch (err) {
-    console.error("Error fetching worksheet data:", err);
+    console.error("Error loading worksheet data:", err);
   }
 }
+
+function createProductRow(item) {
+  const row = document.createElement("div");
+  row.className = "worksheet-row";
+
+  if (item["Row Highlight"] === "Blue Highlight") {
+    row.classList.add("worksheet-row-light-blue");
+  } else if (item["Row Highlight"] === "Green Highlight") {
+    row.classList.add("worksheet-row-light-green");
+  } else {
+    row.classList.add("worksheet-row-white");
+  }
+
+  row.innerHTML = `
+    <div class="worksheet-product">${item.Product || ""}</div>
+    <div class="worksheet-price">$${item.Price?.toFixed(2) || ""}</div>
+    <div class="worksheet-x">X</div>
+    <div class="worksheet-equals">=</div>
+  `;
+
+  return row;
+}
+
+// 🚀 Kick off
+loadWorksheet();

@@ -2,38 +2,35 @@
   font-family: "Helvetica Neue LT Pro";
   src: url("/fonts/HelveticaNeueLTPro-Roman.woff2") format("woff2"),
     url("/fonts/HelveticaNeueLTPro-Roman.woff") format("woff");
-  font-weight: 400; /* Normal */
+  font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
   font-family: "Helvetica Neue LT Pro";
   src: url("/fonts/HelveticaNeueLTPro-Md.woff2") format("woff2"),
     url("/fonts/HelveticaNeueLTPro-Md.woff") format("woff");
-  font-weight: 500; /* Medium */
+  font-weight: 500;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
   font-family: "Helvetica Neue LT Pro";
   src: url("/fonts/HelveticaNeueLTPro-Bd.woff2") format("woff2"),
     url("/fonts/HelveticaNeueLTPro-Bd.woff") format("woff");
-  font-weight: 700; /* Bold */
+  font-weight: 700;
   font-style: normal;
-  font-display: swap;
 }
 
 @font-face {
   font-family: "Helvetica Neue LT Pro";
   src: url("/fonts/HelveticaNeueLTPro-Lt.woff2") format("woff2"),
     url("/fonts/HelveticaNeueLTPro-Lt.woff") format("woff");
-  font-weight: 300; /* Light */
+  font-weight: 300;
   font-style: normal;
-  font-display: swap;
 }
 
+/* Condensed Variants */
 @font-face {
   font-family: "Helvetica Neue LT Pro";
   src: url("/fonts/HelveticaNeueLTPro-LtCn.woff2") format("woff2"),
