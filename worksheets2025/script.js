@@ -25,7 +25,9 @@ async function loadWorksheet() {
 
 async function loadWorksheetData(recordId) {
   try {
-    const response = await fetch(`/api/fetch-worksheet?record=${recordId}`);
+    const response = await fetch(
+      `/api/worksheets/fetch-worksheet?record=${recordId}`
+    );
 
     if (!response.ok) {
       throw new Error(
