@@ -1,64 +1,53 @@
-async function loadTable() {
-  try {
-    const response = await fetch("/api/fetch-table-records");
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch table data. Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("✅ Table data loaded:", data);
-
-    populateTables(data);
-  } catch (err) {
-    console.error("Error loading table:", err);
-  }
-}
-
 function populateTables(data) {
+  if (!data || !Array.isArray(data.records)) {
+    console.error("❌ No valid data to populate tables.");
+    return;
+  }
+
   const mainTable = document.querySelector(".worksheet-rows-main");
   const palletTable = document.querySelector(".worksheet-rows-pallet");
 
   if (!mainTable || !palletTable) {
-    console.error("Missing table containers on the page.");
+    console.error("❌ Table containers not found.");
     return;
   }
 
-  data.forEach((item) => {
-    const row = createProductRow(item);
+  data.records.forEach((item) => {
+    if (!item.fields) return;
 
-    if (item.Section === "Product") {
+    const row = createProductRow(item.fields);
+
+    if (item.fields.Section === "Product") {
       mainTable.appendChild(row);
-    } else if (item.Section === "Pallet Offer") {
+    } else if (item.fields.Section === "Pallet Offer") {
       palletTable.appendChild(row);
     }
   });
+
+  console.log("✅ Tables populated successfully.");
 }
 
-function createProductRow(item) {
+function createProductRow(fields) {
   const row = document.createElement("div");
   row.className = "worksheet-row";
 
-  if (item["Row Highlight"] === "Blue Highlight") {
-    row.classList.add("worksheet-row-light-blue");
-  } else if (item["Row Highlight"] === "Green Highlight") {
+  // Apply background color based on Row Highlight
+  if (fields["Row Highlight"] === "Green Highlight") {
     row.classList.add("worksheet-row-light-green");
+  } else if (fields["Row Highlight"] === "Blue Highlight") {
+    row.classList.add("worksheet-row-light-blue");
   } else {
     row.classList.add("worksheet-row-white");
   }
 
-  const price =
-    item.Price !== undefined ? `$${parseFloat(item.Price).toFixed(2)}` : "";
-
   row.innerHTML = `
-    <div class="worksheet-product">${item.Product || ""}</div>
-    <div class="worksheet-price">${price}</div>
+    <div class="worksheet-product">${fields.Product || ""}</div>
+    <div class="worksheet-price">$${
+      fields.Price ? fields.Price.toFixed(2) : ""
+    }</div>
     <div class="worksheet-x">X</div>
     <div class="worksheet-equals">=</div>
   `;
 
   return row;
 }
-
-// 🚀 Start the loading when page is ready
-loadTable();
