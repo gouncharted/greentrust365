@@ -2,12 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>GreenTrust 365 Golf and Sports Turf Program Worksheet</title>
+    <title></title>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/fonts.css" />
     <link rel="stylesheet" href="/page.css" />
     <link rel="stylesheet" href="/design.css" />
     <link rel="stylesheet" href="/worksheets2025/worksheet-table.css" />
   </head>
+
   <body>
     <div class="page-wrapper">
       <div class="worksheet-wrapper">
@@ -20,19 +23,17 @@
           />
         </div>
 
-        <!-- Main Title -->
+        <!-- Main Title (populated by script.js) -->
         <div class="worksheet-main-title">
           2025 GreenTrust 365 Golf and Sports Turf Program Worksheet
         </div>
 
-        <!-- Table Placeholder (IMPORTANT!) -->
+        <!-- Table container where table.html will be injected -->
         <div id="table-container"></div>
       </div>
     </div>
 
-    <!-- First: Load page script -->
+    <!-- Step 1: Load the worksheet script (handles page setup + injecting the table + loading table script) -->
     <script src="/worksheets2025/golfandsportsturf/script.js"></script>
-
-    <!-- Second: Table script gets injected dynamically via table.html -->
   </body>
 </html>
