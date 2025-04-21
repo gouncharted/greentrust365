@@ -13,11 +13,21 @@ async function loadWorksheet() {
     ).then((res) => res.text());
     document.getElementById("table-container").innerHTML = tableHtml;
 
-    // After loading table, fetch and populate worksheet
-    loadWorksheetData(recordId);
+    console.log("✅ Table loaded successfully");
+
+    // Now call your real worksheet data load
+    await loadWorksheetData(recordId);
   } catch (err) {
-    console.error("Error loading worksheet:", err);
+    console.error("Error loading worksheet or table:", err);
   }
+}
+
+async function loadWorksheetData(recordId) {
+  console.log(
+    "Temporary: Simulating loading worksheet data with recordId:",
+    recordId
+  );
+  // Later this is where you will actually fetch the Airtable fields
 }
 
 loadWorksheet();
