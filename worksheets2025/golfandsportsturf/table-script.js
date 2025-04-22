@@ -3,8 +3,13 @@ async function loadTable() {
     console.log("🔄 Loading table data...");
 
     const response = await fetch("/api/fetch-table-records");
-    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch table records. Status: ${response.status}`
+      );
+    }
 
+    const data = await response.json();
     console.log("✅ Table data loaded:", data);
 
     populateTable(data.records);
@@ -14,31 +19,27 @@ async function loadTable() {
 }
 
 function populateTable(records) {
-  const leftColumn = document.querySelector(".left-table .product-table");
-  const rightColumn = document.querySelector(".right-table .product-table");
+  const leftTable = document.getElementById("left-products");
+  const rightTable = document.getElementById("right-products");
 
-  if (!leftColumn || !rightColumn) {
-    console.error("❌ Missing left/right columns!");
+  if (!leftTable || !rightTable) {
+    console.error("❌ Left or right table container not found.");
     return;
   }
 
-  // Sort records alphabetically (just in case)
-  records.sort((a, b) => {
-    return (a.fields.Product || "").localeCompare(b.fields.Product || "");
-  });
-
-  const splitIndex = Math.ceil(records.length / 2);
-  const leftRecords = records.slice(0, splitIndex);
-  const rightRecords = records.slice(splitIndex);
+  // Split roughly in half
+  const halfway = Math.ceil(records.length / 2);
+  const leftRecords = records.slice(0, halfway);
+  const rightRecords = records.slice(halfway);
 
   leftRecords.forEach((record) => {
     const row = createRow(record);
-    leftColumn.appendChild(row);
+    leftTable.appendChild(row);
   });
 
   rightRecords.forEach((record) => {
     const row = createRow(record);
-    rightColumn.appendChild(row);
+    rightTable.appendChild(row);
   });
 }
 
@@ -47,7 +48,7 @@ function createRow(record) {
   row.className = "worksheet-row";
 
   const productName = record.fields.Product || "";
-  const price = record.fields.Price ? `$${record.fields.Price.toFixed(2)}` : "";
+  const price = record.fields.Price ? record.fields.Price.toFixed(2) : "";
   const x = "X";
   const equals = "=";
 
@@ -70,5 +71,5 @@ function createRow(record) {
   return row;
 }
 
-// Start the script!
+// Start loading on page load
 loadTable();

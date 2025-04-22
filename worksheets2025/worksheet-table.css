@@ -36,13 +36,15 @@
 /* === DATA ROW === */
 .worksheet-row {
   display: grid;
-  grid-template-columns: 45.76% 3.39% 13.56% 3.39% 16.95% 3.39% 13.56%;
+  grid-template-columns: 45% 3% 13% 3% 17% 3% 13%;
+  align-items: center;
   font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-stretch: condensed;
   font-weight: 400;
   font-size: 7.5pt;
   line-height: 8pt;
-  background-color: #ffffff;
-  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 0.5px solid #00703c;
 }
 
 .worksheet-row-light-green {
