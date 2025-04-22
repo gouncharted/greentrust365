@@ -1,84 +1,48 @@
-/* === HERO LOGO BAR === */
-.hero-logo-bar {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.hero-logo-img {
-  width: 540px;
-  height: auto;
-}
-
-/* === MAIN TITLE === */
-.worksheet-main-title {
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 400;
-  font-size: 14pt;
-  color: #00703c;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* === 2-COLUMN TABLE WRAPPER === */
-.table {
+/* === TABLE WRAPPER === */
+.worksheet-tables-wrapper {
   display: flex;
-  width: 100%;
-  justify-content: space-between;
   gap: 18px;
 }
 
-/* === EACH COLUMN === */
-.left-col {
+/* === LEFT and RIGHT TABLES === */
+.left-table,
+.right-table {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
 
-/* === SECTION LABELS (Program Year / Early Order) === */
-.section-label {
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 400;
-  font-size: 9pt;
-  color: #2c2e35;
-  margin-bottom: 10px;
-}
-
-/* === PRODUCT TABLES === */
+/* === PRODUCT TABLE (for both columns) === */
 .product-table {
   display: flex;
   flex-direction: column;
+  border-collapse: collapse;
+  width: 100%;
 }
 
-/* === TABLE HEADERS === */
+/* === HEADER ROW === */
 .row-header {
-  background-color: #00703c;
+  display: grid;
+  grid-template-columns: 45.76% 3.39% 13.56% 3.39% 16.95% 3.39% 13.56%;
+  background-color: #006f3c;
   color: #ffffff;
   font-family: "Helvetica Neue LT Pro", sans-serif;
   font-weight: 700;
   font-size: 8pt;
   line-height: 9pt;
-  display: grid;
-  grid-template-columns: 1fr 80px 60px 60px;
-  align-items: center;
-  padding: 6px 8px;
   text-align: left;
 }
 
-/* === DATA ROWS === */
+/* === DATA ROW === */
 .worksheet-row {
   display: grid;
-  grid-template-columns: 1fr 80px 60px 60px;
-  align-items: center;
+  grid-template-columns: 45.76% 3.39% 13.56% 3.39% 16.95% 3.39% 13.56%;
   font-family: "Helvetica Neue LT Pro", sans-serif;
   font-weight: 400;
   font-size: 7.5pt;
   line-height: 8pt;
-  padding: 6px 8px;
-  border-bottom: 1px solid #00703c;
-}
-
-.worksheet-row-white {
   background-color: #ffffff;
+  text-align: left;
 }
 
 .worksheet-row-light-green {
@@ -89,6 +53,28 @@
   background-color: #73cee3;
 }
 
+/* === ALL CELLS (HEADERS + ROWS) === */
+.row-header div,
+.worksheet-row div {
+  padding: 2px 4px;
+  border: 0.5px solid #006f3c;
+  display: flex;
+  align-items: center;
+  min-height: 16px;
+}
+
+/* === Special tight padding for small cells === */
+.small-cell {
+  justify-content: center;
+  padding: 2px 0px;
+}
+
+/* === Optional: Align prices to right === */
+.price-cell {
+  text-align: right;
+  justify-content: flex-end;
+}
+
 /* === FOOTNOTES === */
 .worksheet-footnotes {
   margin-top: 20px;
@@ -97,38 +83,6 @@
 .worksheet-footnotes-list {
   font-family: "Helvetica Neue LT Pro", sans-serif;
   font-size: 6pt;
-  color: #2c2e35;
   line-height: 7pt;
-}
-
-.worksheet-footnotes-list b {
-  font-weight: 700;
-}
-
-.worksheet-footnotes-list sup {
-  font-size: 6pt;
-  vertical-align: super;
-}
-
-/* === EXTRA UTILITY === */
-a {
-  color: #75c447;
-  text-decoration: underline;
-}
-
-em {
-  font-style: italic;
-}
-
-.worksheet-tables-wrapper {
-  display: flex;
-  justify-content: center;
-  gap: 36px; /* Wider gap between left and right columns */
-}
-
-.left-table,
-.right-table {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  color: #2c2e35;
 }
