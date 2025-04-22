@@ -8,83 +8,49 @@
     <link rel="stylesheet" href="/design.css" />
     <link rel="stylesheet" href="/worksheets2025/worksheet-table.css" />
   </head>
+
   <body>
-    <div class="page-wrapper">
-      <div class="worksheet-wrapper">
-        <!-- Logo Bar -->
-        <div class="hero-logo-bar">
-          <img
-            src="/img/hero-logo-bar.svg"
-            alt="Hero Logo"
-            class="hero-logo-img"
-          />
-        </div>
-
-        <!-- Main Title -->
-        <div class="worksheet-main-title">
-          2025 GreenTrust 365 Golf and Sports Turf Program Worksheet
-        </div>
-
-        <!-- Table Placeholder -->
-        <div id="table-container">
-          <div class="worksheet-tables-wrapper">
-            <!-- LEFT COLUMN (Products) -->
-            <div class="left-table">
-              <div class="product-table">
-                <div class="row-header">
-                  <div class="product-header">
-                    Qualifying Agency Products (Package Size)
-                  </div>
-                  <div class="pkg-price-header">
-                    Pkg Price<br />for 2025 Program Year
-                  </div>
-                  <div class="num-pkgs-header">
-                    Number of Pkgs<br />Purchased
-                  </div>
-                  <div class="qual-amt-header">
-                    Qualifying<br />Purchase Amount
-                  </div>
-                </div>
-                <div id="left-products"></div>
-                <!-- Left products populated here -->
-              </div>
+    <div class="worksheet-tables-wrapper">
+      <!-- Column: LEFT (Main Products) -->
+      <div class="left-table">
+        <div class="product-table">
+          <div class="row-header">
+            <div class="product-header">
+              Qualifying Agency Products (Package Size)
             </div>
-
-            <!-- RIGHT COLUMN (Pallet Offers + Footnotes) -->
-            <div class="right-table">
-              <div class="product-table">
-                <div class="row-header">
-                  <div class="product-header">Pallet Offers</div>
-                  <div class="pkg-price-header">
-                    Pkg Price<br />for 2025 Program Year
-                  </div>
-                  <div class="num-pkgs-header">
-                    Number of Pkgs<br />Purchased
-                  </div>
-                  <div class="qual-amt-header">
-                    Qualifying<br />Purchase Amount
-                  </div>
-                </div>
-                <div id="right-products"></div>
-                <!-- Right products populated here -->
-              </div>
-
-              <!-- FOOTNOTES under right column -->
-              <div class="worksheet-footnotes">
-                <div class="worksheet-footnotes-list"></div>
-              </div>
+            <div class="pkg-price-header">
+              Pkg Price<br />for 2025 Program Year
             </div>
+            <div class="num-pkgs-header">Number of Pkgs<br />Purchased</div>
+            <div class="qual-amt-header">Qualifying<br />Purchase Amount</div>
           </div>
+          <div id="left-products"></div>
         </div>
       </div>
-      <!-- worksheet-wrapper -->
+
+      <!-- Column: RIGHT (Pallet Offers) -->
+      <div class="right-table">
+        <div class="product-table">
+          <div class="row-header">
+            <div class="product-header">Pallet Offers</div>
+            <div class="pkg-price-header">
+              Pkg Price<br />for 2025 Program Year
+            </div>
+            <div class="num-pkgs-header">Number of Pkgs<br />Purchased</div>
+            <div class="qual-amt-header">Qualifying<br />Purchase Amount</div>
+          </div>
+          <div id="right-products"></div>
+        </div>
+
+        <!-- FOOTNOTES (under pallet offers) -->
+        <div class="worksheet-footnotes">
+          <div class="worksheet-footnotes-list"></div>
+        </div>
+      </div>
     </div>
-    <!-- page-wrapper -->
+    <!-- /worksheet-tables-wrapper -->
 
-    <!-- Load only the TABLE SCRIPT -->
+    <!-- Load ONLY the table script (NO page script here) -->
     <script src="/worksheets2025/golfandsportsturf/table-script.js"></script>
-
-    <!-- DO NOT LOAD page script for now -->
-    <!-- <script src="/worksheets2025/golfandsportsturf/script.js"></script> -->
   </body>
 </html>
