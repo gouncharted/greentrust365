@@ -1,54 +1,90 @@
-<div class="worksheet-tables-wrapper">
-  <div class="table">
-    <!-- LEFT COLUMN -->
-    <div class="left-col">
-      <div class="section-label">
-        Program Year: October 1, 2024 – September 30, 2025
-      </div>
-
-      <div class="product-table">
-        <!-- Table Header -->
-        <div class="row row-header">
-          <div class="worksheet-product">
-            Qualifying Agency Products (Package Size)
-          </div>
-          <div class="worksheet-price">
-            Pkg Price<br />for 2025 Program Year
-          </div>
-          <div class="worksheet-x">Number of Pkgs<br />Purchased</div>
-          <div class="worksheet-equals">Qualifying<br />Purchase Amount</div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GreenTrust 365 Golf and Sports Turf Program Worksheet</title>
+    <link rel="stylesheet" href="/fonts.css" />
+    <link rel="stylesheet" href="/page.css" />
+    <link rel="stylesheet" href="/design.css" />
+    <link rel="stylesheet" href="/worksheets2025/worksheet-table.css" />
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <div class="worksheet-wrapper">
+        <!-- Logo Bar -->
+        <div class="hero-logo-bar">
+          <img
+            src="/img/hero-logo-bar.svg"
+            alt="Hero Logo"
+            class="hero-logo-img"
+          />
         </div>
 
-        <!-- Dynamic Left Products -->
-        <div id="left-products"></div>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="left-col">
-      <div class="section-label">
-        Early Order Period: October 1, 2024 – December 10, 2024
-      </div>
-
-      <div class="product-table">
-        <!-- Table Header -->
-        <div class="row row-header">
-          <div class="worksheet-product">
-            Qualifying Agency Products (Package Size)
-          </div>
-          <div class="worksheet-price">
-            Pkg Price<br />for 2025 Program Year
-          </div>
-          <div class="worksheet-x">Number of Pkgs<br />Purchased</div>
-          <div class="worksheet-equals">Qualifying<br />Purchase Amount</div>
+        <!-- Main Title -->
+        <div class="worksheet-main-title">
+          2025 GreenTrust 365 Golf and Sports Turf Program Worksheet
         </div>
 
-        <!-- Dynamic Right Products -->
-        <div id="right-products"></div>
-      </div>
-    </div>
-  </div>
-</div>
+        <!-- Table Placeholder -->
+        <div id="table-container">
+          <div class="worksheet-tables-wrapper">
+            <!-- LEFT COLUMN (Products) -->
+            <div class="left-table">
+              <div class="product-table">
+                <div class="row-header">
+                  <div class="product-header">
+                    Qualifying Agency Products (Package Size)
+                  </div>
+                  <div class="pkg-price-header">
+                    Pkg Price<br />for 2025 Program Year
+                  </div>
+                  <div class="num-pkgs-header">
+                    Number of Pkgs<br />Purchased
+                  </div>
+                  <div class="qual-amt-header">
+                    Qualifying<br />Purchase Amount
+                  </div>
+                </div>
+                <div id="left-products"></div>
+                <!-- Left products populated here -->
+              </div>
+            </div>
 
-<!-- ADD THIS to connect the table script -->
-<script src="/worksheets2025/golfandsportsturf/table-script.js"></script>
+            <!-- RIGHT COLUMN (Pallet Offers + Footnotes) -->
+            <div class="right-table">
+              <div class="product-table">
+                <div class="row-header">
+                  <div class="product-header">Pallet Offers</div>
+                  <div class="pkg-price-header">
+                    Pkg Price<br />for 2025 Program Year
+                  </div>
+                  <div class="num-pkgs-header">
+                    Number of Pkgs<br />Purchased
+                  </div>
+                  <div class="qual-amt-header">
+                    Qualifying<br />Purchase Amount
+                  </div>
+                </div>
+                <div id="right-products"></div>
+                <!-- Right products populated here -->
+              </div>
+
+              <!-- FOOTNOTES under right column -->
+              <div class="worksheet-footnotes">
+                <div class="worksheet-footnotes-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- worksheet-wrapper -->
+    </div>
+    <!-- page-wrapper -->
+
+    <!-- Load only the TABLE SCRIPT -->
+    <script src="/worksheets2025/golfandsportsturf/table-script.js"></script>
+
+    <!-- DO NOT LOAD page script for now -->
+    <!-- <script src="/worksheets2025/golfandsportsturf/script.js"></script> -->
+  </body>
+</html>
