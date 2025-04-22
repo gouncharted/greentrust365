@@ -1,16 +1,51 @@
 <div class="worksheet-tables-wrapper">
-  <!-- Left Column -->
-  <div class="left-table">
-    <div class="product-table" id="left-products"></div>
-  </div>
+  <div class="table">
+    <!-- LEFT COLUMN -->
+    <div class="left-col">
+      <div class="section-label">
+        Program Year: October 1, 2024 – September 30, 2025
+      </div>
 
-  <!-- Right Column -->
-  <div class="right-table">
-    <div class="product-table" id="right-products"></div>
+      <div class="product-table">
+        <!-- Table Header -->
+        <div class="row row-header">
+          <div class="worksheet-product">
+            Qualifying Agency Products (Package Size)
+          </div>
+          <div class="worksheet-price">
+            Pkg Price<br />for 2025 Program Year
+          </div>
+          <div class="worksheet-x">Number of Pkgs<br />Purchased</div>
+          <div class="worksheet-equals">Qualifying<br />Purchase Amount</div>
+        </div>
 
-    <!-- Footnotes under right column -->
-    <div class="worksheet-footnotes">
-      <div class="worksheet-footnotes-list"></div>
+        <!-- Dynamic Left Products -->
+        <div id="left-products"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="left-col">
+      <div class="section-label">
+        Early Order Period: October 1, 2024 – December 10, 2024
+      </div>
+
+      <div class="product-table">
+        <!-- Table Header -->
+        <div class="row row-header">
+          <div class="worksheet-product">
+            Qualifying Agency Products (Package Size)
+          </div>
+          <div class="worksheet-price">
+            Pkg Price<br />for 2025 Program Year
+          </div>
+          <div class="worksheet-x">Number of Pkgs<br />Purchased</div>
+          <div class="worksheet-equals">Qualifying<br />Purchase Amount</div>
+        </div>
+
+        <!-- Dynamic Right Products -->
+        <div id="right-products"></div>
+      </div>
     </div>
   </div>
 </div>
