@@ -1,14 +1,11 @@
 async function loadTableData() {
   try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const recordId = urlParams.get("record");
-
-    const response = await fetch(`/api/fetch-table-records?record=${recordId}`);
-    if (!response.ok)
+    const response = await fetch(`/api/fetch-table-records`);
+    if (!response.ok) {
       throw new Error(`Failed to fetch table data. Status: ${response.status}`);
-
+    }
     const data = await response.json();
-    console.log("✅ Table data loaded:", data);
+    console.log("✅ Table data loaded: ", data);
 
     populateTable(data.records);
   } catch (err) {
@@ -17,52 +14,35 @@ async function loadTableData() {
 }
 
 function populateTable(records) {
-  if (!Array.isArray(records)) {
-    console.error("Table records not an array:", records);
-    return;
-  }
+  const tableContainer = document.getElementById("worksheet-tables");
 
-  const leftTable = document.getElementById("left-products");
-  const rightTable = document.getElementById("right-products");
+  records.forEach((item) => {
+    const fields = item.fields || {};
+    const section = fields.Section || "";
+    const highlight = fields["Row Highlight"] || "";
+    const priceRaw = fields["Pkg Price"] || "";
+    const productName = fields["Product"] || "";
 
-  if (!leftTable || !rightTable) {
-    console.error("Missing left or right table elements!");
-    return;
-  }
+    const row = document.createElement("div");
+    row.classList.add("worksheet-row");
+    if (highlight === "Blue Highlight") {
+      row.classList.add("worksheet-row-light-blue");
+    } else if (highlight === "Green Highlight") {
+      row.classList.add("worksheet-row-light-green");
+    }
 
-  // Split records by Section
-  const mainProducts = records.filter((r) => r.fields.Section === "Product");
-  const palletOffers = records.filter(
-    (r) => r.fields.Section === "Pallet Offer"
-  );
+    row.innerHTML = `
+      <div class="product-header">${productName}</div>
+      <div></div> <!-- Spacer -->
+      <div class="dollar-sign">$</div>
+      <div class="price">${parseFloat(priceRaw).toFixed(2)}</div>
+      <div class="x-symbol">X</div>
+      <div class="equals-symbol">=</div>
+      <div class="blank-field"></div>
+    `;
 
-  mainProducts.forEach((item) => {
-    const row = createRow(item);
-    leftTable.appendChild(row);
-  });
-
-  palletOffers.forEach((item) => {
-    const row = createRow(item);
-    rightTable.appendChild(row);
+    tableContainer.appendChild(row);
   });
 }
 
-function createRow(item) {
-  const row = document.createElement("div");
-  row.className = "worksheet-row";
-
-  const product = item.fields.Product || "";
-  const price = item.fields.Price ? `$${item.fields.Price.toFixed(2)}` : "";
-
-  row.innerHTML = `
-    <div class="worksheet-product">${product}</div>
-    <div class="worksheet-price">${price}</div>
-    <div class="worksheet-x">X</div>
-    <div class="worksheet-equals">=</div>
-  `;
-
-  return row;
-}
-
-// Load everything on page load
 loadTableData();

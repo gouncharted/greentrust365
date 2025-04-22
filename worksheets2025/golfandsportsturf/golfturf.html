@@ -25,44 +25,31 @@
           2025 GreenTrust 365 Golf and Sports Turf Program Worksheet
         </div>
 
-        <!-- Table Placeholder -->
-        <div id="table-container">
-          <div class="worksheet-tables-wrapper">
-            <div class="left-table">
-              <div class="product-table">
-                <div class="row row-header">
-                  <div class="product-header">Qualifying Agency Products (Package Size)</div>
-                  <div class="pkg-price-header">Pkg Price<br />for 2025 Program Year</div>
-                  <div class="num-pkgs-header">Number of Pkgs<br />Purchased</div>
-                  <div class="qual-amt-header">Qualifying<br />Purchase Amount</div>
-                </div>
-                <div id="left-products"></div> <!-- 💥 changed! -->
-              </div>
-            </div>
-        
-            <div class="right-table">
-              <div class="product-table">
-                <div class="row row-header">
-                  <div class="product-header">Pallet Offers</div>
-                  <div class="pkg-price-header">Pkg Price<br />for 2025 Program Year</div>
-                  <div class="num-pkgs-header">Number of Pkgs<br />Purchased</div>
-                  <div class="qual-amt-header">Qualifying<br />Purchase Amount</div>
-                </div>
-                <div id="right-products"></div> <!-- 💥 changed! -->
-              </div>
-        
-              <!-- Footnotes go below Pallet Offers -->
-              <div class="worksheet-footnotes">
-                <div class="worksheet-footnotes-list"></div>
-              </div>
-            </div>
+        <!-- Subhead Section -->
+        <div class="worksheet-subhead">
+          <div class="subhead-item">
+            <strong>Program Year:</strong> October 1, 2024 through September 30,
+            2025
+          </div>
+          <div class="subhead-item">
+            <strong>Early Order Period:</strong> October 1, 2024 through
+            December 10, 2024
           </div>
         </div>
 
-    <!-- Only load table script -->
-    <script src="/worksheets2025/golfandsportsturf/table-script.js"></script>
+        <!-- Table Container -->
+        <div id="table-container">
+          <div class="worksheet-tables-wrapper" id="worksheet-tables">
+            <!-- 🧩 Rows will be injected dynamically by table-script.js -->
+          </div>
+        </div>
 
-    <!-- REMOVE or COMMENT OUT the page script -->
-    <!-- <script src="/worksheets2025/golfandsportsturf/script.js"></script> -->
+        <!-- Footnotes will be appended if needed -->
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/worksheets2025/golfandsportsturf/table-script.js"></script>
+    <!-- (script.js stays OFF for this page) -->
   </body>
 </html>

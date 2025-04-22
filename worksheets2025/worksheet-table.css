@@ -1,87 +1,79 @@
-/* === HERO LOGO BAR === */
-.hero-logo-bar {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.hero-logo-img {
-  width: 540px;
-  height: auto;
-}
-
-/* === MAIN TITLE === */
-.worksheet-main-title {
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 400;
-  font-size: 14pt;
-  color: #00703c;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* === 2-COLUMN WRAPPER === */
 .worksheet-tables-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 9px 36px 45px 9px 36px 1fr;
   width: 100%;
-  gap: 18px;
-  justify-content: space-between;
+  margin-top: 20px;
+  column-gap: 0px;
 }
 
-/* === LEFT COLUMN === */
-.left-table {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.product-table {
+  display: contents; /* Let rows flow into the grid directly */
 }
 
-/* === RIGHT COLUMN === */
-.right-table {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* === TABLE HEADERS === */
-.row-header {
-  background-color: #00703c;
-  color: #ffffff;
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 700;
-  font-size: 8pt;
-  line-height: 9pt;
-  display: grid;
-  grid-template-columns: 1fr 80px 60px 60px;
-  padding: 6px 8px;
-  align-items: center;
-}
-
-/* === DATA ROWS === */
+.row-header,
 .worksheet-row {
-  display: grid;
-  grid-template-columns: 1fr 80px 60px 60px;
-  align-items: center;
+  display: contents; /* Same here */
+}
+
+.product-header,
+.pkg-price-header,
+.num-pkgs-header,
+.qual-amt-header,
+.dollar-sign,
+.price,
+.x-symbol,
+.equals-symbol,
+.blank-field {
   font-family: "Helvetica Neue LT Pro", sans-serif;
   font-weight: 400;
   font-size: 7.5pt;
   line-height: 8pt;
-  padding: 4px 8px;
+  color: #2c2e35;
+  padding: 6px 4px;
   border-bottom: 0.5px solid #00703c;
+  display: flex;
+  align-items: center;
 }
 
-/* === ALTERNATING BACKGROUNDS (optional later if needed) === */
-.worksheet-row-white {
-  background-color: #ffffff;
+.product-header {
+  font-weight: 700;
+  font-size: 8pt;
+  color: #ffffff;
+  background-color: #00703c;
+  padding-left: 6px;
+}
+
+.pkg-price-header,
+.num-pkgs-header,
+.qual-amt-header {
+  font-weight: 700;
+  font-size: 6pt;
+  color: #ffffff;
+  background-color: #00703c;
+  text-align: center;
+}
+
+.worksheet-row .dollar-sign,
+.worksheet-row .price,
+.worksheet-row .x-symbol,
+.worksheet-row .equals-symbol {
+  text-align: center;
+}
+
+.blank-field {
+  border-left: 0.5px solid #00703c;
+}
+
+/* Highlight Rows */
+.worksheet-row-light-blue {
+  background-color: #73cee3;
 }
 
 .worksheet-row-light-green {
   background-color: #c7e1ad;
 }
 
-.worksheet-row-light-blue {
-  background-color: #73cee3;
-}
-
-/* === FOOTNOTES === */
+/* Footnotes */
 .worksheet-footnotes {
   margin-top: 20px;
 }
@@ -91,13 +83,4 @@
   font-size: 6pt;
   color: #2c2e35;
   line-height: 7pt;
-}
-
-.worksheet-footnotes-list b {
-  font-weight: 700;
-}
-
-.worksheet-footnotes-list sup {
-  font-size: 6pt;
-  vertical-align: super;
 }
