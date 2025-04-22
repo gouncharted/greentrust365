@@ -1,86 +1,71 @@
-.worksheet-tables-wrapper {
+.worksheet-table-container {
+  display: flex;
+  width: 100%;
+  gap: 24px;
+}
+
+.product-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-row {
   display: grid;
   grid-template-columns: auto 9px 36px 9px 45px 9px 36px;
+  align-items: center;
   width: 100%;
-  margin-top: 20px;
-  column-gap: 0px;
-}
-
-.product-table {
-  display: contents; /* Let rows flow into the grid directly */
-}
-
-.row-header,
-.worksheet-row {
-  display: contents; /* Same here */
-}
-
-.product-header,
-.pkg-price-header,
-.num-pkgs-header,
-.qual-amt-header,
-.dollar-sign,
-.price,
-.x-symbol,
-.equals-symbol,
-.blank-field {
+  min-height: 24px;
+  border-bottom: 1px solid #00703c;
   font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-weight: 400;
   font-size: 7.5pt;
   line-height: 8pt;
-  color: #2c2e35;
-  padding: 6px 4px;
-  border-bottom: 0.5px solid #00703c;
-  display: flex;
-  align-items: center;
 }
 
-.product-header {
+.product-title {
+  padding-left: 4px;
   font-weight: 700;
   font-size: 8pt;
-  color: #ffffff;
-  background-color: #00703c;
-  padding-left: 6px;
 }
 
-.pkg-price-header,
-.num-pkgs-header,
-.qual-amt-header {
-  font-weight: 700;
-  font-size: 6pt;
-  color: #ffffff;
-  background-color: #00703c;
+.icon {
   text-align: center;
 }
 
-.worksheet-row .dollar-sign,
-.worksheet-row .price,
-.worksheet-row .x-symbol,
-.worksheet-row .equals-symbol {
-  text-align: center;
-}
-
-.blank-field {
+.left-stroke {
   border-left: 0.5px solid #00703c;
 }
 
-/* Highlight Rows */
-.worksheet-row-light-blue {
+.right-stroke {
+  border-right: 0.5px solid #00703c;
+}
+
+.outside-stroke {
+  border-left: 0.5px solid #00703c;
+  border-right: 0.5px solid #00703c;
+}
+
+.blank {
+  /* Empty cells */
+}
+
+.blue-highlight {
   background-color: #73cee3;
 }
 
-.worksheet-row-light-green {
+.green-highlight {
   background-color: #c7e1ad;
 }
 
-/* Footnotes */
-.worksheet-footnotes {
-  margin-top: 20px;
+/* Subhead */
+.worksheet-subhead {
+  font-family: "Helvetica Neue LT Pro", sans-serif;
+  font-size: 8pt;
+  line-height: 10pt;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
-.worksheet-footnotes-list {
-  font-family: "Helvetica Neue LT Pro", sans-serif;
-  font-size: 6pt;
-  color: #2c2e35;
-  line-height: 7pt;
+.worksheet-subhead div {
+  margin-bottom: 4px;
 }

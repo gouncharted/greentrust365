@@ -1,47 +1,62 @@
-async function loadTableData() {
-  try {
-    const response = await fetch(`/api/fetch-table-records`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch table data. Status: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log("✅ Table data loaded: ", data);
+function createProductRow(item) {
+  const row = document.createElement("div");
+  row.className = "product-row";
 
-    populateTable(data.records);
-  } catch (err) {
-    console.error("❌ Error loading table data:", err);
-  }
+  const title = document.createElement("div");
+  title.className = "product-title";
+  title.textContent = item["Product"] || "";
+
+  const dollarSign = document.createElement("div");
+  dollarSign.className = "icon left-stroke";
+  dollarSign.textContent = "$";
+
+  const price = document.createElement("div");
+  price.className = "right-stroke";
+  price.textContent = formatPrice(item["Price"]);
+
+  const xSign = document.createElement("div");
+  xSign.className = "icon right-stroke";
+  xSign.textContent = "X";
+
+  const blank1 = document.createElement("div");
+  blank1.className = "blank";
+
+  const equalSign = document.createElement("div");
+  equalSign.className = "icon outside-stroke";
+  equalSign.textContent = "=";
+
+  const blank2 = document.createElement("div");
+  blank2.className = "blank";
+
+  row.append(title, dollarSign, price, xSign, blank1, equalSign, blank2);
+  return row;
 }
 
-function populateTable(records) {
-  const tableContainer = document.getElementById("worksheet-tables");
+function formatPrice(price) {
+  if (typeof price === "number") {
+    return price.toFixed(2);
+  }
+  return "";
+}
 
-  records.forEach((item) => {
-    const fields = item.fields || {};
-    const section = fields.Section || "";
-    const highlight = fields["Row Highlight"] || "";
-    const priceRaw = fields["Pkg Price"] || "";
-    const productName = fields["Product"] || "";
+async function loadTableData() {
+  const res = await fetch("/api/fetch-table-records");
+  const data = await res.json();
 
-    const row = document.createElement("div");
-    row.classList.add("worksheet-row");
-    if (highlight === "Blue Highlight") {
-      row.classList.add("worksheet-row-light-blue");
-    } else if (highlight === "Green Highlight") {
-      row.classList.add("worksheet-row-light-green");
+  console.log("Loaded product data:", data.records);
+
+  const leftCol = document.getElementById("left-products");
+  const rightCol = document.getElementById("right-products");
+
+  const halfway = Math.ceil(data.records.length / 2);
+
+  data.records.forEach((record, index) => {
+    const row = createProductRow(record.fields);
+    if (index < halfway) {
+      leftCol.appendChild(row);
+    } else {
+      rightCol.appendChild(row);
     }
-
-    row.innerHTML = `
-      <div class="product-header">${productName}</div>
-      <div></div> <!-- Spacer -->
-      <div class="dollar-sign">$</div>
-      <div class="price">${parseFloat(priceRaw).toFixed(2)}</div>
-      <div class="x-symbol">X</div>
-      <div class="equals-symbol">=</div>
-      <div class="blank-field"></div>
-    `;
-
-    tableContainer.appendChild(row);
   });
 }
 
