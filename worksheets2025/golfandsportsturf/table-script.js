@@ -1,75 +1,75 @@
-async function loadTable() {
-  try {
-    console.log("🔄 Loading table data...");
+async function loadTableData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const recordId = urlParams.get("record");
 
-    const response = await fetch("/api/fetch-table-records");
+  if (!recordId) {
+    console.error("No record ID found in URL.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/fetch-table-records?record=${recordId}`);
+
     if (!response.ok) {
-      throw new Error(
-        `Failed to fetch table records. Status: ${response.status}`
-      );
+      throw new Error(`Failed to fetch table data. Status: ${response.status}`);
     }
 
     const data = await response.json();
     console.log("✅ Table data loaded:", data);
 
-    populateTable(data.records);
+    const leftTable = document.getElementById("left-products");
+    const rightTable = document.getElementById("right-products");
+
+    const allRows = [...data.mainProducts, ...data.palletOffers];
+
+    allRows.forEach((item, index) => {
+      const row = createTableRow(item);
+
+      if (index % 2 === 0) {
+        leftTable.appendChild(row);
+      } else {
+        rightTable.appendChild(row);
+      }
+    });
+
+    // Footnotes
+    if (data.footnotes?.length > 0) {
+      const footnoteList = document.querySelector(".worksheet-footnotes-list");
+      footnoteList.innerHTML = data.footnotes
+        .map((note) => `<div>${note}</div>`)
+        .join("");
+    }
   } catch (err) {
-    console.error("❌ Error loading table:", err);
+    console.error("Error loading table data:", err);
   }
 }
 
-function populateTable(records) {
-  const leftTable = document.getElementById("left-products");
-  const rightTable = document.getElementById("right-products");
-
-  if (!leftTable || !rightTable) {
-    console.error("❌ Left or right table container not found.");
-    return;
-  }
-
-  // Split roughly in half
-  const halfway = Math.ceil(records.length / 2);
-  const leftRecords = records.slice(0, halfway);
-  const rightRecords = records.slice(halfway);
-
-  leftRecords.forEach((record) => {
-    const row = createRow(record);
-    leftTable.appendChild(row);
-  });
-
-  rightRecords.forEach((record) => {
-    const row = createRow(record);
-    rightTable.appendChild(row);
-  });
-}
-
-function createRow(record) {
+function createTableRow(item) {
   const row = document.createElement("div");
   row.className = "worksheet-row";
 
-  const productName = record.fields.Product || "";
-  const price = record.fields.Price ? record.fields.Price.toFixed(2) : "";
-  const x = "X";
-  const equals = "=";
-
-  if (record.fields["Row Highlight"] === "Blue Highlight") {
+  if (item["Row Highlight"] === "Blue Highlight") {
     row.classList.add("worksheet-row-light-blue");
-  } else if (record.fields["Row Highlight"] === "Green Highlight") {
+  } else if (item["Row Highlight"] === "Green Highlight") {
     row.classList.add("worksheet-row-light-green");
+  } else {
+    row.classList.add("worksheet-row-white");
   }
 
+  // Auto format price without extra dollar sign if already clean
+  const price = item.Price ? `$${parseFloat(item.Price).toFixed(2)}` : "";
+
   row.innerHTML = `
-    <div>${productName}</div>
-    <div class="small-cell">$</div>
-    <div class="small-cell price-cell">${price}</div>
-    <div class="small-cell">${x}</div>
-    <div class="small-cell"></div>
-    <div class="small-cell">${equals}</div>
-    <div class="small-cell"></div>
+    <div class="worksheet-product">${item.Product || ""}</div>
+    <div class="worksheet-price">${price}</div>
+    <div class="worksheet-x">X</div>
+    <div class="worksheet-price"></div>
+    <div class="worksheet-equals">=</div>
+    <div class="worksheet-price"></div>
   `;
 
   return row;
 }
 
-// Start loading on page load
-loadTable();
+// 🚀 Start loading once the table.html is inserted
+loadTableData();
