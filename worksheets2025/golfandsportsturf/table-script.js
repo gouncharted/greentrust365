@@ -1,59 +1,67 @@
 async function loadTable() {
   try {
-    console.log("⏳ Loading table data...");
+    console.log("🔄 Loading table data...");
 
-    const response = await fetch(`/api/fetch-table-records`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch table records. Status: ${response.status}`);
-    }
-
+    const response = await fetch("/api/fetch-table-records");
     const data = await response.json();
+
     console.log("✅ Table data loaded:", data);
 
-    populateTables(data.records); // ⬅️ notice: 'records', not full object
+    const combined = [...data.mainProducts, ...data.palletOffers];
+
+    // Alphabetically sort by Product field
+    combined.sort((a, b) => {
+      const nameA = (a.Product || "").toUpperCase();
+      const nameB = (b.Product || "").toUpperCase();
+      return nameA.localeCompare(nameB);
+    });
+
+    // Split into two halves
+    const middleIndex = Math.ceil(combined.length / 2);
+    const leftSide = combined.slice(0, middleIndex);
+    const rightSide = combined.slice(middleIndex);
+
+    // Populate both sides
+    populateTable(leftSide, document.getElementById("left-products"));
+    populateTable(rightSide, document.getElementById("right-products"));
+
+    // Populate footnotes if any
+    const footnoteList = document.querySelector(".worksheet-footnotes-list");
+    if (footnoteList && data.footnotes?.length > 0) {
+      footnoteList.innerHTML = data.footnotes
+        .map((note) => `<div>${note}</div>`)
+        .join("");
+    }
   } catch (err) {
     console.error("❌ Error loading table:", err);
   }
 }
 
-function populateTables(records) {
-  const mainTable = document.querySelector(".worksheet-rows-main");
-  const palletTable = document.querySelector(".worksheet-rows-pallet");
+function populateTable(items, container) {
+  items.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "worksheet-row";
 
-  records.forEach((item) => {
-    const section = item.fields.Section;
-    const row = createProductRow(item.fields);
-
-    if (section === "Product" && mainTable) {
-      mainTable.appendChild(row);
-    } else if (section === "Pallet Offer" && palletTable) {
-      palletTable.appendChild(row);
+    if (item["Row Highlight"] === "Blue Highlight") {
+      row.classList.add("worksheet-row-light-blue");
+    } else if (item["Row Highlight"] === "Green Highlight") {
+      row.classList.add("worksheet-row-light-green");
+    } else {
+      row.classList.add("worksheet-row-white");
     }
+
+    row.innerHTML = `
+      <div class="worksheet-product">${item.Product || ""}</div>
+      <div class="worksheet-price">${
+        item.Price ? `$${item.Price.toFixed(2)}` : ""
+      }</div>
+      <div class="worksheet-x">X</div>
+      <div class="worksheet-equals">=</div>
+    `;
+
+    container.appendChild(row);
   });
 }
 
-function createProductRow(item) {
-  const row = document.createElement("div");
-  row.className = "worksheet-row";
-
-  if (item["Row Highlight"] === "Blue Highlight") {
-    row.classList.add("worksheet-row-light-blue");
-  } else if (item["Row Highlight"] === "Green Highlight") {
-    row.classList.add("worksheet-row-light-green");
-  } else {
-    row.classList.add("worksheet-row-white");
-  }
-
-  row.innerHTML = `
-    <div class="worksheet-product">${item.Product || ""}</div>
-    <div class="worksheet-price">$${item.Price?.toFixed(2) || ""}</div>
-    <div class="worksheet-x">X</div>
-    <div class="worksheet-equals">=</div>
-  `;
-
-  return row;
-}
-
-// Start it
+// START table load
 loadTable();
