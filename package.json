@@ -1,9 +1,7 @@
 {
   "name": "greentrust365",
   "version": "1.0.0",
-  "type": "module",
   "dependencies": {
-    "puppeteer-core": "^24.9.0",
-    "@sparticuz/chromium": "^131.0.0"
+    "chrome-aws-lambda": "^10.1.0"
   }
 }
