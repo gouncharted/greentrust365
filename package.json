@@ -1,7 +1,7 @@
 {
-  "name": "your-project-name",
+  "name": "greentrust365",
   "version": "1.0.0",
   "dependencies": {
-    "puppeteer": "^21.0.0"
+    "puppeteer": "^24.9.0"
   }
 }
