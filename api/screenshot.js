@@ -1,5 +1,4 @@
-import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+const chromium = require('chrome-aws-lambda');
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -12,23 +11,24 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { url, selector, width = 630, height = 810, scale = 4 } = req.query;
-  
-  if (!url || !selector) {
-    return res.status(400).json({ 
-      error: 'Missing required parameters: url and selector',
-      usage: '/api/screenshot?url=YOUR_URL&selector=ELEMENT_SELECTOR'
+  // For testing - return simple response
+  if (!req.query.url) {
+    return res.json({ 
+      status: 'Screenshot API Ready',
+      usage: '/api/screenshot?url=YOUR_URL&selector=ELEMENT_SELECTOR&scale=4',
+      chromium: chromium ? 'Available' : 'Not Available'
     });
   }
+
+  const { url, selector, width = 630, height = 810, scale = 4 } = req.query;
   
   console.log(`📸 Capturing: ${selector} from ${url} at ${scale}x scale`);
   
   try {
-    // Configure Chromium for Vercel
-    const browser = await puppeteer.launch({
+    const browser = await chromium.puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath: await chromium.executablePath,
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
@@ -43,20 +43,13 @@ export default async function handler(req, res) {
     
     await page.goto(url, { 
       waitUntil: 'networkidle0',
-      timeout: 60000 
+      timeout: 30000 
     });
     
-    // Wait for fonts and layout
-    await page.waitForTimeout(8000);
+    await page.waitForTimeout(5000);
     
-    // Hide export buttons
     await page.addStyleTag({
-      content: `
-        .pdf-export-ui, .pdf-export-ui * { 
-          display: none !important; 
-          visibility: hidden !important; 
-        }
-      `
+      content: '.pdf-export-ui { display: none !important; }'
     });
     
     const element = await page.$(selector);
@@ -71,19 +64,14 @@ export default async function handler(req, res) {
     
     await browser.close();
     
-    console.log(`✅ Screenshot captured: ${screenshot.length} bytes`);
-    
     res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Content-Disposition', 'attachment; filename="screenshot.png"');
     res.send(screenshot);
     
   } catch (error) {
     console.error('❌ Screenshot failed:', error);
     res.status(500).json({ 
       error: error.message,
-      selector: selector,
-      url: url,
-      debug: 'Puppeteer error in Vercel serverless function'
+      service: 'vercel-puppeteer-screenshot'
     });
   }
 }
