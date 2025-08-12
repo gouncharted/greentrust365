@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -13,21 +14,23 @@ export default async function handler(req, res) {
 
   const { url, selector, width = 630, height = 810, scale = 4 } = req.query;
   
+  if (!url || !selector) {
+    return res.status(400).json({ 
+      error: 'Missing required parameters: url and selector',
+      usage: '/api/screenshot?url=YOUR_URL&selector=ELEMENT_SELECTOR'
+    });
+  }
+  
   console.log(`📸 Capturing: ${selector} from ${url} at ${scale}x scale`);
   
   try {
+    // Configure Chromium for Vercel
     const browser = await puppeteer.launch({
-      headless: 'new',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu'
-      ]
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
     });
     
     const page = await browser.newPage();
@@ -79,7 +82,8 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       error: error.message,
       selector: selector,
-      url: url 
+      url: url,
+      debug: 'Puppeteer error in Vercel serverless function'
     });
   }
 }
