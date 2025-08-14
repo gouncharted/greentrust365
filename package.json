@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "playwright-core": "^1.46.1",
     "pdf-lib": "^1.17.1"
   }
 }
