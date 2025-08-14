@@ -1,170 +1,134 @@
-import { chromium } from 'playwright-core';
 import { PDFDocument } from 'pdf-lib';
 
-// Keep this in sync with your front-end config
-const worksheetConfigs = {
-  ornca:  { name: 'Ornamental CA Worksheet 2026',          pageCount: 4, color: '#228B22' },
-  ornstd: { name: 'Ornamental STD Worksheet 2026',         pageCount: 4, color: '#32CD32' },
-  gstca:  { name: 'Golf and Turf Sports CA Worksheet 2026',pageCount: 4, color: '#006400' },
-  gststd: { name: 'Golf and Turf Sports STD Worksheet 2026',pageCount: 4, color: '#9ACD32' },
-  lawnca: { name: 'Lawn CA Worksheet 2026',                 pageCount: 4, color: '#2E8B57' },
-  lawnstd:{ name: 'Lawn STD Worksheet 2026',                pageCount: 4, color: '#3CB371' },
-  pallet: { name: 'Pallet Offers Worksheet 2026',           pageCount: 4, color: '#2E8B57' },
-  mpo:    { name: 'Multipak Offers Worksheet 2026',         pageCount: 2, color: '#3CB371' }
-};
-
-// Constants for your fixed export block
-const EXPORT_PX = { width: 630, height: 810 };           // your div size
-const BLEED_IN = { width: 8.75, height: 11.25 };         // PDF page size
-const DEFAULT_SCALE = 3;                                  // deviceScaleFactor 2–4 typical
+const EXPORT_PX = { width: 630, height: 810 };      // your div size
+const BLEED_IN  = { width: 8.75, height: 11.25 };   // PDF page size
 const DEFAULT_WAIT_MS = 1500;
 
-/**
- * Render exactly one page (selector) to a single-page PDF buffer at bleed size.
- */
-async function renderSinglePagePDF(page, selector) {
-  // Isolation & print CSS
-  await page.addStyleTag({
-    content: `
-      /* Hide UI and everything except target element */
-      .pdf-export-ui { display: none !important; }
-      body * { visibility: hidden !important; }
-      ${selector}, ${selector} * { visibility: visible !important; }
+// Keep in sync with your site
+const worksheetConfigs = {
+  ornca:  { name: 'Ornamental CA Worksheet 2026',            pageCount: 4 },
+  ornstd: { name: 'Ornamental STD Worksheet 2026',           pageCount: 4 },
+  gstca:  { name: 'Golf and Turf Sports CA Worksheet 2026',  pageCount: 4 },
+  gststd: { name: 'Golf and Turf Sports STD Worksheet 2026', pageCount: 4 },
+  lawnca: { name: 'Lawn CA Worksheet 2026',                   pageCount: 4 },
+  lawnstd:{ name: 'Lawn STD Worksheet 2026',                  pageCount: 4 },
+  pallet: { name: 'Pallet Offers Worksheet 2026',             pageCount: 4 },
+  mpo:    { name: 'Multipak Offers Worksheet 2026',           pageCount: 2 }
+};
 
-      /* Force PDF page to exact bleed size */
-      @page { size: ${BLEED_IN.width}in ${BLEED_IN.height}in; margin: 0; }
-      html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
-      html, body { width: ${BLEED_IN.width}in; height: ${BLEED_IN.height}in; }
+// Minimal auto-detect: fetch HTML and look for #<key>-page1
+async function detectTypeFromHtml(html) {
+  for (const key of Object.keys(worksheetConfigs)) {
+    const needle = `id="${key}-page1"`;
+    if (html.includes(needle)) return key;
+  }
+  return null;
+}
 
-      /* Pin the target element to the top-left, exact pixel size, no transforms */
-      ${selector} {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: ${EXPORT_PX.width}px !important;
-        height: ${EXPORT_PX.height}px !important;
-        transform: none !important;
-        box-shadow: none !important;
-      }
-    `
+async function renderOnePageWithREST({ region, token, url, selector, waitMs }) {
+  const css = `
+    /* Hide UI and everything except the target export block */
+    .pdf-export-ui{display:none!important}
+    body * { visibility:hidden!important }
+    ${selector}, ${selector} * { visibility:visible!important }
+
+    /* Exact bleed page size; zero margins */
+    @page { size: ${BLEED_IN.width}in ${BLEED_IN.height}in; margin:0 }
+    html,body{ margin:0!important; padding:0!important; background:#fff!important;
+               width:${BLEED_IN.width}in; height:${BLEED_IN.height}in }
+
+    /* Pin the export block at top-left with your exact pixel size */
+    ${selector}{
+      position:fixed!important; top:0!important; left:0!important;
+      width:${EXPORT_PX.width}px!important; height:${EXPORT_PX.height}px!important;
+      transform:none!important; box-shadow:none!important;
+    }
+  `;
+
+  const resp = await fetch(`https://production-${region}.browserless.io/pdf?token=${token}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      url,
+      gotoOptions: { waitUntil: 'networkidle0' },
+      options: {
+        printBackground: true,
+        preferCSSPageSize: true,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 }
+      },
+      waitFor: waitMs || DEFAULT_WAIT_MS,
+      css
+    })
   });
 
-  // Ensure the target exists before printing
-  const exists = await page.$(selector);
-  if (!exists) throw new Error(`Selector not found: ${selector}`);
+  if (!resp.ok) {
+    const msg = await resp.text();
+    throw new Error(`Browserless /pdf failed (${resp.status}): ${msg}`);
+  }
 
-  // Print exactly one PDF page
-  const pdfBuffer = await page.pdf({
-    printBackground: true,
-    preferCSSPageSize: true,   // uses @page size above
-    margin: { top: 0, right: 0, bottom: 0, left: 0 }
-  });
-
-  return pdfBuffer;
+  return Buffer.from(await resp.arrayBuffer());
 }
 
 export default async function handler(req, res) {
-  // --- CORS (optional) ---
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // CORS (optional)
+  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const params = req.method === 'POST' ? (req.body || {}) : (req.query || {});
-  const url = params.url;
-  const type = (params.type || '').trim(); // e.g., 'gststd', 'gstca', 'ornstd', etc.
-  const pageCountOverride = params.pageCount ? parseInt(params.pageCount, 10) : null;
-  const scale = params.scale ? parseInt(params.scale, 10) : DEFAULT_SCALE;
-  const wait = params.wait ? parseInt(params.wait, 10) : DEFAULT_WAIT_MS;
-
-  if (!url) return res.status(400).json({ error: 'Missing ?url' });
-
-  // Resolve type: either provided or auto-detect the first one that has "-page1"
-  let resolvedType = type;
-  if (!resolvedType) {
-    // Light auto-detect: check each known type for presence of #<type>-page1
-    // We’ll do a fast pass in the page after navigation.
-  }
-
-  if (!process.env.BROWSERLESS_TOKEN) {
-    return res.status(500).json({ error: 'Missing BROWSERLESS_TOKEN environment variable' });
-  }
-
-  let browser;
   try {
-    // Connect to Browserless hosted Chrome
-    browser = await chromium.connect({
-  wsEndpoint: `wss://production-sfo.browserless.io?token=${process.env.BROWSERLESS_TOKEN}`,
-});
+    const params   = req.method === 'POST' ? (req.body || {}) : (req.query || {});
+    const url      = params.url;
+    let   type     = (params.type || '').trim(); // optional; auto-detected if missing
+    const pageCountOverride = params.pageCount ? parseInt(params.pageCount,10) : null;
+    const waitMs   = params.wait ? parseInt(params.wait,10) : DEFAULT_WAIT_MS;
 
-    const context = await browser.newContext({
-      viewport: {
-        width: EXPORT_PX.width,
-        height: EXPORT_PX.height,
-        deviceScaleFactor: scale
+    const token  = process.env.BROWSERLESS_TOKEN;
+    const region = process.env.BROWSERLESS_REGION || 'sfo';
+
+    if (!url)   return res.status(400).json({ error: 'Missing ?url' });
+    if (!token) return res.status(500).json({ error: 'Missing BROWSERLESS_TOKEN env var' });
+
+    // Auto-detect type if not provided
+    if (!type) {
+      const htmlResp = await fetch(url, { method: 'GET' });
+      if (!htmlResp.ok) {
+        return res.status(400).json({ error: `Failed to load URL for detection (${htmlResp.status})` });
       }
-    });
-    const page = await context.newPage();
-
-    await page.goto(url, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(wait);
-
-    // If the type wasn't provided, try to detect it by probing for #<key>-page1
-    if (!resolvedType) {
-      for (const key of Object.keys(worksheetConfigs)) {
-        const found = await page.$(`#${key}-page1`);
-        if (found) { resolvedType = key; break; }
-      }
+      const html = await htmlResp.text();
+      const detected = await detectTypeFromHtml(html);
+      if (detected) type = detected;
     }
 
-    if (!resolvedType || !worksheetConfigs[resolvedType]) {
-      throw new Error(`Unknown or undetectable 'type'. Provide one of: ${Object.keys(worksheetConfigs).join(', ')}.`);
+    if (!type || !worksheetConfigs[type]) {
+      return res.status(400).json({ error: `Provide a valid ?type. Options: ${Object.keys(worksheetConfigs).join(', ')}` });
     }
 
-    const baseConfig = worksheetConfigs[resolvedType];
-    const pageCount = pageCountOverride || baseConfig.pageCount;
+    const base = worksheetConfigs[type];
+    const pageCount = pageCountOverride || base.pageCount;
 
-    // Render each page to a single-page PDF buffer
-    const pdfBuffers = [];
+    // Render each page with Browserless /pdf
+    const pageBuffers = [];
     for (let i = 1; i <= pageCount; i++) {
-      const selector = `#${resolvedType}-page${i}`;
-
-      // For each page, we add isolation CSS, print one page, then remove it before next page.
-      // To simplify: reload the page between prints (ensures a clean DOM for each page’s injected CSS)
-      if (i > 1) {
-        await page.goto(url, { waitUntil: 'networkidle' });
-        await page.waitForTimeout(wait);
-      }
-
-      const singlePagePDF = await renderSinglePagePDF(page, selector);
-      pdfBuffers.push(singlePagePDF);
+      const selector = `#${type}-page${i}`;
+      const buf = await renderOnePageWithREST({ region, token, url, selector, waitMs });
+      pageBuffers.push(buf);
     }
 
-    // Merge all single-page PDFs into one
+    // Merge into one PDF (preserves vectors/text)
     const mergedPdf = await PDFDocument.create();
-    for (const buf of pdfBuffers) {
+    for (const buf of pageBuffers) {
       const src = await PDFDocument.load(buf);
-      const copied = await mergedPdf.copyPages(src, src.getPageIndices());
-      copied.forEach(p => mergedPdf.addPage(p));
+      const pages = await mergedPdf.copyPages(src, src.getPageIndices());
+      pages.forEach(p => mergedPdf.addPage(p));
     }
     const mergedBytes = await mergedPdf.save();
 
-    // Name the file from config if available
-    const filenameBase = (baseConfig.name || resolvedType)
-      .replace(/\s+/g, '-')
-      .toLowerCase();
-    const filename = `${filenameBase}.pdf`;
-
-    // Return PDF
+    const filenameBase = (base.name || type).replace(/\s+/g,'-').toLowerCase();
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
-    return res.send(Buffer.from(mergedBytes));
-
+    res.setHeader('Content-Disposition', `inline; filename="${filenameBase}.pdf"`);
+    res.send(Buffer.from(mergedBytes));
   } catch (err) {
-    return res.status(500).json({ error: String(err?.message || err) });
-  } finally {
-    if (browser) {
-      try { await browser.close(); } catch {}
-    }
+    res.status(500).json({ error: String(err?.message || err) });
   }
 }
