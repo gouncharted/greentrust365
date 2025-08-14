@@ -94,8 +94,8 @@ export default async function handler(req, res) {
   try {
     // Connect to Browserless hosted Chrome
     browser = await chromium.connect({
-      wsEndpoint: `wss://chrome.browserless.io?token=${process.env.BROWSERLESS_TOKEN}`
-    });
+  wsEndpoint: `wss://production-sfo.browserless.io?token=${process.env.BROWSERLESS_TOKEN}`,
+});
 
     const context = await browser.newContext({
       viewport: {
