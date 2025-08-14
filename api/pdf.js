@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-core';
 import { PDFDocument } from 'pdf-lib';
 
-const EXPORT_PX = { width: 630, height: 810 };      // your div size
+const EXPORT_PX = { width: 630, height: 810 };      // Your div size
 const BLEED_IN  = { width: 8.75, height: 11.25 };   // PDF page size
 const DEFAULT_WAIT_MS = 1500;
 
@@ -10,10 +10,10 @@ const worksheetConfigs = {
   ornstd: { name: 'Ornamental STD Worksheet 2026',           pageCount: 4 },
   gstca:  { name: 'Golf and Turf Sports CA Worksheet 2026',  pageCount: 4 },
   gststd: { name: 'Golf and Turf Sports STD Worksheet 2026', pageCount: 4 },
-  lawnca: { name: 'Lawn CA Worksheet 2026',                   pageCount: 4 },
-  lawnstd:{ name: 'Lawn STD Worksheet 2026',                  pageCount: 4 },
-  pallet: { name: 'Pallet Offers Worksheet 2026',             pageCount: 4 },
-  mpo:    { name: 'Multipak Offers Worksheet 2026',           pageCount: 2 }
+  lawnca: { name: 'Lawn CA Worksheet 2026',                  pageCount: 4 },
+  lawnstd:{ name: 'Lawn STD Worksheet 2026',                 pageCount: 4 },
+  pallet: { name: 'Pallet Offers Worksheet 2026',            pageCount: 4 },
+  mpo:    { name: 'Multipak Offers Worksheet 2026',          pageCount: 2 }
 };
 
 // Simple auto-detect: look for id="<key>-page1" in HTML
@@ -24,8 +24,10 @@ async function detectTypeFromHtml(html) {
   return null;
 }
 
+// Sleep helper
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function renderSinglePagePDF(page, selector) {
-  // Inject isolation + print CSS
   await page.addStyleTag({
     content: `
       .pdf-export-ui { display:none !important; }
@@ -48,7 +50,6 @@ async function renderSinglePagePDF(page, selector) {
   const exists = await page.$(selector);
   if (!exists) throw new Error(`Selector not found: ${selector}`);
 
-  // Print exactly one page at the bleed size, keeping vectors/text
   return await page.pdf({
     printBackground: true,
     preferCSSPageSize: true,
@@ -57,7 +58,6 @@ async function renderSinglePagePDF(page, selector) {
 }
 
 export default async function handler(req, res) {
-  // CORS (optional)
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers','Content-Type');
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
   try {
     const params   = req.method === 'POST' ? (req.body || {}) : (req.query || {});
     const url      = params.url;
-    let   type     = (params.type || '').trim();   // optional; auto-detected if missing
+    let   type     = (params.type || '').trim();   // optional; auto-detect if missing
     const pageCountOverride = params.pageCount ? parseInt(params.pageCount,10) : null;
     const waitMs   = params.wait ? parseInt(params.wait,10) : DEFAULT_WAIT_MS;
 
@@ -93,27 +93,30 @@ export default async function handler(req, res) {
     const base = worksheetConfigs[type];
     const pageCount = pageCountOverride || base.pageCount;
 
-    // Connect to Browserless (library/WebSocket)
+    // Connect to Browserless
     const browser = await puppeteer.connect({
       browserWSEndpoint: `wss://production-${region}.browserless.io?token=${token}`
     });
 
     const page = await browser.newPage();
-    // Set viewport to your export block size at a nice density (3 is a good start)
-    await page.setViewport({ width: EXPORT_PX.width, height: EXPORT_PX.height, deviceScaleFactor: 3 });
+    await page.setViewport({
+      width: EXPORT_PX.width,
+      height: EXPORT_PX.height,
+      deviceScaleFactor: 3
+    });
 
     // Load once
     await page.goto(url, { waitUntil: 'networkidle0' });
-    await page.waitForTimeout(waitMs);
+    await sleep(waitMs);
 
     const pdfBuffers = [];
     for (let i = 1; i <= pageCount; i++) {
       const selector = `#${type}-page${i}`;
 
-      // For a clean DOM before injecting styles each time, reload between pages
+      // Reload for a clean DOM before each new page capture
       if (i > 1) {
         await page.goto(url, { waitUntil: 'networkidle0' });
-        await page.waitForTimeout(waitMs);
+        await sleep(waitMs);
       }
 
       const singlePage = await renderSinglePagePDF(page, selector);
@@ -122,7 +125,7 @@ export default async function handler(req, res) {
 
     await browser.close();
 
-    // Merge pages with pdf-lib (preserves vector content)
+    // Merge with pdf-lib
     const mergedPdf = await PDFDocument.create();
     for (const buf of pdfBuffers) {
       const src = await PDFDocument.load(buf);
