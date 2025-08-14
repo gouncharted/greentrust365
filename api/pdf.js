@@ -1,8 +1,7 @@
 import puppeteer from 'puppeteer-core';
 import { PDFDocument } from 'pdf-lib';
 
-const EXPORT_PX = { width: 630, height: 810 };      // Your div size
-const BLEED_IN  = { width: 8.75, height: 11.25 };   // PDF page size
+const BLEED_IN  = { width: 8.75, height: 11.25 };   // Full bleed size
 const DEFAULT_WAIT_MS = 1500;
 
 const worksheetConfigs = {
@@ -16,7 +15,6 @@ const worksheetConfigs = {
   mpo:    { name: 'Multipak Offers Worksheet 2026',          pageCount: 2 }
 };
 
-// Simple auto-detect: look for id="<key>-page1" in HTML
 async function detectTypeFromHtml(html) {
   for (const key of Object.keys(worksheetConfigs)) {
     if (html.includes(`id="${key}-page1"`)) return key;
@@ -24,7 +22,6 @@ async function detectTypeFromHtml(html) {
   return null;
 }
 
-// Sleep helper
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function renderSinglePagePDF(page, selector) {
@@ -36,13 +33,20 @@ async function renderSinglePagePDF(page, selector) {
 
       @page { size: ${BLEED_IN.width}in ${BLEED_IN.height}in; margin:0; }
       html, body {
-        margin:0 !important; padding:0 !important; background:#fff !important;
-        width:${BLEED_IN.width}in; height:${BLEED_IN.height}in;
+        margin:0 !important;
+        padding:0 !important;
+        background:#fff !important;
+        width:${BLEED_IN.width}in !important;
+        height:${BLEED_IN.height}in !important;
       }
       ${selector} {
-        position:fixed !important; top:0 !important; left:0 !important;
-        width:${EXPORT_PX.width}px !important; height:${EXPORT_PX.height}px !important;
-        box-shadow:none !important; transform:none !important;
+        position:fixed !important;
+        top:0 !important;
+        left:0 !important;
+        width:${BLEED_IN.width}in !important;
+        height:${BLEED_IN.height}in !important;
+        transform:none !important;
+        box-shadow:none !important;
       }
     `
   });
@@ -66,7 +70,7 @@ export default async function handler(req, res) {
   try {
     const params   = req.method === 'POST' ? (req.body || {}) : (req.query || {});
     const url      = params.url;
-    let   type     = (params.type || '').trim();   // optional; auto-detect if missing
+    let   type     = (params.type || '').trim();
     const pageCountOverride = params.pageCount ? parseInt(params.pageCount,10) : null;
     const waitMs   = params.wait ? parseInt(params.wait,10) : DEFAULT_WAIT_MS;
 
@@ -76,7 +80,6 @@ export default async function handler(req, res) {
     if (!url)   return res.status(400).json({ error: 'Missing ?url' });
     if (!token) return res.status(500).json({ error: 'Missing BROWSERLESS_TOKEN env var' });
 
-    // Auto-detect type from HTML if not provided
     if (!type) {
       const htmlResp = await fetch(url);
       if (!htmlResp.ok) {
@@ -93,19 +96,18 @@ export default async function handler(req, res) {
     const base = worksheetConfigs[type];
     const pageCount = pageCountOverride || base.pageCount;
 
-    // Connect to Browserless
     const browser = await puppeteer.connect({
       browserWSEndpoint: `wss://production-${region}.browserless.io?token=${token}`
     });
 
     const page = await browser.newPage();
+    // Viewport is irrelevant for final size because we set in CSS to full page bleed
     await page.setViewport({
-      width: EXPORT_PX.width,
-      height: EXPORT_PX.height,
-      deviceScaleFactor: 3
+      width: 1400,  // large enough so scaling doesn't clip
+      height: 2000,
+      deviceScaleFactor: 2
     });
 
-    // Load once
     await page.goto(url, { waitUntil: 'networkidle0' });
     await sleep(waitMs);
 
@@ -113,7 +115,6 @@ export default async function handler(req, res) {
     for (let i = 1; i <= pageCount; i++) {
       const selector = `#${type}-page${i}`;
 
-      // Reload for a clean DOM before each new page capture
       if (i > 1) {
         await page.goto(url, { waitUntil: 'networkidle0' });
         await sleep(waitMs);
@@ -125,7 +126,6 @@ export default async function handler(req, res) {
 
     await browser.close();
 
-    // Merge with pdf-lib
     const mergedPdf = await PDFDocument.create();
     for (const buf of pdfBuffers) {
       const src = await PDFDocument.load(buf);
