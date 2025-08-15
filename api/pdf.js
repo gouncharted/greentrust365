@@ -1,143 +1,152 @@
-import puppeteer from 'puppeteer-core';
-import { PDFDocument } from 'pdf-lib';
+// Add this enhanced function to your existing code
 
-const BLEED_IN = { width: 8.75, height: 11.25 };   // Full bleed size
-const DPI = 96; // Standard web DPI
-const VIEWPORT = {
-  width: Math.round(BLEED_IN.width * DPI),   // 840px
-  height: Math.round(BLEED_IN.height * DPI),  // 1080px
-};
-const DEFAULT_WAIT_MS = 1500;
-
-const worksheetConfigs = {
-  ornca:  { name: 'Ornamental CA Worksheet 2026',            pageCount: 4 },
-  ornstd: { name: 'Ornamental STD Worksheet 2026',           pageCount: 4 },
-  gstca:  { name: 'Golf and Turf Sports CA Worksheet 2026',  pageCount: 4 },
-  gststd: { name: 'Golf and Turf Sports STD Worksheet 2026', pageCount: 4 },
-  lawnca: { name: 'Lawn CA Worksheet 2026',                  pageCount: 4 },
-  lawnstd:{ name: 'Lawn STD Worksheet 2026',                 pageCount: 4 },
-  pallet: { name: 'Pallet Offers Worksheet 2026',            pageCount: 4 },
-  mpo:    { name: 'Multipak Offers Worksheet 2026',          pageCount: 2 }
-};
-
-async function detectTypeFromHtml(html) {
-  for (const key of Object.keys(worksheetConfigs)) {
-    if (html.includes(`id="${key}-page1"`)) return key;
-  }
-  return null;
-}
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function renderSinglePagePDF(page, selector) {
-  // First, inject styles BEFORE evaluating the page
-  await page.evaluateHandle((sel, bleedWidth, bleedHeight) => {
-    // Create a high-priority style element
-    const style = document.createElement('style');
-    style.textContent = `
-      /* Hide everything except target */
-      .pdf-export-ui { display: none !important; }
-      body * { 
-        visibility: hidden !important; 
-        position: static !important;
-      }
-      ${sel}, ${sel} * { 
-        visibility: visible !important; 
-      }
-
-      /* Reset page and body */
-      @page { 
-        size: ${bleedWidth}in ${bleedHeight}in; 
-        margin: 0; 
+async function renderSinglePagePDF(page, selector, mode = 'fullbleed') {
+  // Define dimensions based on mode
+  // Using 72 DPI to match your existing layout
+  const dimensions = {
+    fullbleed: { 
+      width: 8.75, 
+      height: 11.25, 
+      pixelWidth: 630,  // 8.75" × 72 DPI
+      pixelHeight: 810, // 11.25" × 72 DPI
+      class: 'print-full-bleed' 
+    },
+    trim: { 
+      width: 8.5, 
+      height: 11, 
+      pixelWidth: 612,  // 8.5" × 72 DPI
+      pixelHeight: 792, // 11" × 72 DPI
+      class: 'print-trim-only' 
+    }
+  };
+  
+  const config = dimensions[mode] || dimensions.fullbleed;
+  
+  // Inject styles and apply print class
+  await page.evaluateHandle((sel, cfg) => {
+    // Remove any existing print classes
+    document.body.classList.remove('print-full-bleed', 'print-trim-only', 'print-active');
+    
+    // Add the appropriate print class
+    document.body.classList.add(cfg.class, 'print-active');
+    
+    // Create or update print styles
+    let printStyle = document.getElementById('dynamic-print-styles');
+    if (!printStyle) {
+      printStyle = document.createElement('style');
+      printStyle.id = 'dynamic-print-styles';
+      document.head.appendChild(printStyle);
+    }
+    
+    printStyle.textContent = `
+      @page {
+        size: ${cfg.width}in ${cfg.height}in;
+        margin: 0;
       }
       
-      html {
+      /* Reset everything */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      html, body {
         margin: 0 !important;
         padding: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
+        width: ${cfg.pixelWidth}px !important;
+        height: ${cfg.pixelHeight}px !important;
         overflow: hidden !important;
       }
       
-      body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-        width: ${bleedWidth}in !important;
-        height: ${bleedHeight}in !important;
-        overflow: hidden !important;
-        position: relative !important;
+      /* Hide all other elements */
+      body > *:not(${sel}) {
+        display: none !important;
       }
       
       /* Position and size the target element */
       ${sel} {
-        position: absolute !important;
+        position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
-        width: ${bleedWidth}in !important;
-        height: ${bleedHeight}in !important;
-        max-width: ${bleedWidth}in !important;
-        max-height: ${bleedHeight}in !important;
         transform: none !important;
         transform-origin: top left !important;
-        box-shadow: none !important;
-        border: none !important;
-        overflow: visible !important;
-        box-sizing: border-box !important;
       }
       
-      /* Ensure content fills the container */
-      ${sel} > * {
-        max-width: 100% !important;
-        max-height: 100% !important;
-      }
+      /* Mode-specific sizing */
+      ${cfg.class === 'print-full-bleed' ? `
+        /* Full bleed mode - keep at 630×810 */
+        ${sel} {
+          width: 630px !important;
+          height: 810px !important;
+        }
+        ${sel} .page-trim {
+          /* Keep trim at original position and size */
+          width: 612px !important;
+          height: 792px !important;
+          position: absolute !important;
+          top: 9px !important;
+          left: 9px !important;
+        }
+      ` : `
+        /* Trim mode - crop to 612×792 */
+        ${sel} {
+          width: 612px !important;
+          height: 792px !important;
+        }
+        ${sel} .page-trim {
+          /* Move trim to 0,0 and keep at 612×792 */
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 612px !important;
+          height: 792px !important;
+        }
+        /* Hide bleed area background */
+        ${sel} {
+          background: transparent !important;
+        }
+      `}
     `;
     
-    // Insert at the end of head to override other styles
-    document.head.appendChild(style);
-    
-    // Also force the element to the correct size via JS
-    const element = document.querySelector(sel);
-    if (element) {
-      element.style.cssText = `
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: ${bleedWidth}in !important;
-        height: ${bleedHeight}in !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        transform: none !important;
-        box-sizing: border-box !important;
-      `;
-      
-      // Move element to body root if nested
-      if (element.parentNode !== document.body) {
-        document.body.appendChild(element);
+    // If trim mode, physically adjust the DOM
+    if (cfg.class === 'print-trim-only') {
+      const element = document.querySelector(sel);
+      const trimElement = element?.querySelector('.page-trim');
+      if (element && trimElement) {
+        // Override inline styles for trim mode
+        element.style.width = '612px';
+        element.style.height = '792px';
+        trimElement.style.top = '0';
+        trimElement.style.left = '0';
       }
     }
-  }, selector, BLEED_IN.width, BLEED_IN.height);
-
-  // Wait for any reflows
+    
+    // Force reflow
+    document.body.offsetHeight;
+    
+  }, selector, config);
+  
+  // Wait for styles to apply
   await sleep(100);
-
-  // Verify element exists and is visible
+  
+  // Verify element exists
   const exists = await page.$(selector);
   if (!exists) throw new Error(`Selector not found: ${selector}`);
-
-  // Generate PDF with exact dimensions
+  
+  // Generate PDF with mode-specific dimensions
   return await page.pdf({
     printBackground: true,
-    preferCSSPageSize: false, // We'll set exact dimensions
-    width: `${BLEED_IN.width}in`,
-    height: `${BLEED_IN.height}in`,
+    preferCSSPageSize: false,
+    width: `${config.width}in`,
+    height: `${config.height}in`,
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
-    scale: 1, // No scaling
+    scale: 1,
   });
 }
 
+// Modified main handler to support mode parameter
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET, POST, OPTIONS');
@@ -148,36 +157,24 @@ export default async function handler(req, res) {
     const params = req.method === 'POST' ? (req.body || {}) : (req.query || {});
     const url = params.url;
     let type = (params.type || '').trim();
+    const mode = (params.mode || 'fullbleed').toLowerCase(); // 'fullbleed' or 'trim'
     const pageCountOverride = params.pageCount ? parseInt(params.pageCount, 10) : null;
-    const waitMs = params.wait ? parseInt(params.wait, 10) : DEFAULT_WAIT_MS;
+    const waitMs = params.wait ? parseInt(params.wait, 10) : 1500;
     
-    // Add debug mode flag
-    const debug = params.debug === 'true';
-
+    // Validate mode
+    if (!['fullbleed', 'trim'].includes(mode)) {
+      return res.status(400).json({ 
+        error: 'Invalid mode. Use "fullbleed" or "trim"' 
+      });
+    }
+    
     const token = process.env.BROWSERLESS_TOKEN;
     const region = process.env.BROWSERLESS_REGION || 'sfo';
 
     if (!url) return res.status(400).json({ error: 'Missing ?url' });
     if (!token) return res.status(500).json({ error: 'Missing BROWSERLESS_TOKEN env var' });
 
-    if (!type) {
-      const htmlResp = await fetch(url);
-      if (!htmlResp.ok) {
-        return res.status(400).json({ error: `Failed to load URL for detection (${htmlResp.status})` });
-      }
-      const html = await htmlResp.text();
-      const detected = await detectTypeFromHtml(html);
-      if (detected) type = detected;
-    }
-    
-    if (!type || !worksheetConfigs[type]) {
-      return res.status(400).json({ 
-        error: `Provide a valid ?type. Options: ${Object.keys(worksheetConfigs).join(', ')}` 
-      });
-    }
-
-    const base = worksheetConfigs[type];
-    const pageCount = pageCountOverride || base.pageCount;
+    // ... (rest of your existing type detection code) ...
 
     const browser = await puppeteer.connect({
       browserWSEndpoint: `wss://production-${region}.browserless.io?token=${token}`
@@ -185,65 +182,64 @@ export default async function handler(req, res) {
 
     const page = await browser.newPage();
     
-    // Set viewport to match PDF dimensions
+    // Set viewport based on mode - using 72 DPI dimensions
+    const viewportDimensions = mode === 'fullbleed' 
+      ? { width: 630, height: 810 }  // 8.75" x 11.25" at 72 DPI
+      : { width: 612, height: 792 }; // 8.5" x 11" at 72 DPI
+    
     await page.setViewport({
-      width: VIEWPORT.width,
-      height: VIEWPORT.height,
-      deviceScaleFactor: 1, // Changed from 2 to 1 for accurate sizing
+      ...viewportDimensions,
+      deviceScaleFactor: 1,
     });
     
-    // Set user agent to ensure consistent rendering
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
-
-    // Navigate to the page
+    // Optional: Set media type to print
+    await page.emulateMediaType('print');
+    
     await page.goto(url, { waitUntil: 'networkidle0' });
     await sleep(waitMs);
-    
-    // If debug mode, take a screenshot of the first page before PDF generation
-    if (debug) {
-      const screenshot = await page.screenshot({ 
-        fullPage: false,
-        clip: { x: 0, y: 0, width: VIEWPORT.width, height: VIEWPORT.height }
-      });
-      console.log('Debug screenshot taken, size:', screenshot.length, 'bytes');
-    }
 
     const pdfBuffers = [];
+    const worksheetConfig = worksheetConfigs[type];
+    const pageCount = pageCountOverride || worksheetConfig.pageCount;
+    
     for (let i = 1; i <= pageCount; i++) {
       const selector = `#${type}-page${i}`;
-
+      
       if (i > 1) {
-        // Reload page for each subsequent page to ensure clean state
         await page.goto(url, { waitUntil: 'networkidle0' });
         await sleep(waitMs);
       }
-
-      const singlePage = await renderSinglePagePDF(page, selector);
-      pdfBuffers.push(singlePage);
       
-      if (debug) {
-        console.log(`Page ${i} PDF size:`, singlePage.length, 'bytes');
-      }
+      // Pass mode to render function
+      const singlePage = await renderSinglePagePDF(page, selector, mode);
+      pdfBuffers.push(singlePage);
     }
 
     await browser.close();
 
-    // Merge PDFs
+    // Merge PDFs with correct dimensions
+    const dimensions = mode === 'fullbleed'
+      ? { width: 8.75, height: 11.25 }
+      : { width: 8.5, height: 11 };
+    
     const mergedPdf = await PDFDocument.create();
     for (const buf of pdfBuffers) {
       const src = await PDFDocument.load(buf);
       const pages = await mergedPdf.copyPages(src, src.getPageIndices());
       pages.forEach(p => {
-        // Ensure page size is correct when adding
-        p.setSize(BLEED_IN.width * 72, BLEED_IN.height * 72); // 72 points per inch
+        p.setSize(dimensions.width * 72, dimensions.height * 72);
         mergedPdf.addPage(p);
       });
     }
+    
     const mergedBytes = await mergedPdf.save();
-
-    const filenameBase = (base.name || type).replace(/\s+/g, '-').toLowerCase();
+    
+    // Include mode in filename
+    const baseName = (worksheetConfig.name || type).replace(/\s+/g, '-').toLowerCase();
+    const filename = `${baseName}-${mode}.pdf`;
+    
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${filenameBase}.pdf"`);
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
     res.send(Buffer.from(mergedBytes));
     
   } catch (err) {
